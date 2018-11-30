@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <BoardHandler.hh>
 
+
 using std::cout;
 using std::endl;
 
@@ -93,10 +94,63 @@ Board BoardHandler::moveLeft(const Board board) const {
     return newBoard;
 }
 
-void BoardHandler::printHex(const Board board) const {
-    cout << std::setfill('0') << std::setw(4) << std::hex << (board >> 12*4) << endl;
-    cout << std::setfill('0') << std::setw(4) << std::hex << ((board >> 8*4) & 0xFFFF) << endl;
-    cout << std::setfill('0') << std::setw(4) << std::hex << ((board >> 4*4) & 0xFFFF) << endl;
-    cout << std::setfill('0') << std::setw(4) << std::hex << (board & 0xFFFF) << endl;
-    cout << "\n";
+int BoardHandler::moveAndScore(Board &board, int move) const {
+    for (int i = 0; i < move; ++i) {
+        board = rotateLeft(board);
+    }
+    int score = 0;
+    int tempScore = 0;
+    Board newBoard = 0;
+    newBoard |= rowHandler->moveLeft(board & 0xFFFF, tempScore);
+    score += tempScore;
+    newBoard |= rowHandler->moveLeft((board & 0xFFFF0000) >> 16, tempScore) << 16;
+    score += tempScore;
+    newBoard |= rowHandler->moveLeft((board & 0xFFFF00000000) >> 32, tempScore) << 32;
+    score += tempScore;
+    newBoard |= rowHandler->moveLeft((board & 0xFFFF000000000000) >> 48, tempScore) << 48;
+    score += tempScore;
+    board = newBoard;
+    for (int i = 0; i < (4 - move); ++i) {
+        board = rotateLeft(board);
+    }
+    return score;
+}
+
+vector<BoardAndMove> BoardHandler::getPossibleMoves(Board board) const {
+    vector<BoardAndMove> v;
+    Board movedBoard;
+    for (int m = 0; m < 4; ++m) {
+        movedBoard = moveLeft(board);
+        if (movedBoard != board) {
+            v.push_back({movedBoard, m});
+        }
+        if (m != 4) board = rotateLeft(board);  // don't need to rotate last time
+    }
+    return v;
+}
+
+vector<int> BoardHandler::getPossibleSpawns(Board board) const {
+    std::vector<int> v;
+    Board mask = 0xFull;
+    for (int i = 0; i < 16; ++i) {
+        if ((board & mask) == 0) {
+            v.push_back(i);
+        }
+        mask = mask << 4;
+    }
+    return v;
+}
+
+
+void BoardHandler::printHex(const Board board, int indent) const {
+    for (int i = 0; i < indent; i++) cout << " ";
+    cout << std::setfill('0') << std::setw(4) << std::hex << (board >> 12*4) << "\n";
+    for (int i = 0; i < indent; i++) cout << " ";
+    cout << std::setfill('0') << std::setw(4) << std::hex << ((board >> 8*4) & 0xFFFF) << "\n";
+    for (int i = 0; i < indent; i++) cout << " ";
+    cout << std::setfill('0') << std::setw(4) << std::hex << ((board >> 4*4) & 0xFFFF) << "\n";
+    for (int i = 0; i < indent; i++) cout << " ";
+    cout << std::setfill('0') << std::setw(4) << std::hex << (board & 0xFFFF) << "\n\n";
+    cout << std::dec;
+//    cout << "---------------" << endl;
 }

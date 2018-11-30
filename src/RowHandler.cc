@@ -5,12 +5,14 @@
 #include "RowHandler.hh"
 
 #include <iostream>
+
 using std::cout;
 using std::endl;
 
 /*
  Row notation:
  3 2 1 0
+ d c b a
  */
 
 RowHandler::RowHandler() {
@@ -19,61 +21,72 @@ RowHandler::RowHandler() {
 
 void RowHandler::initCache() {
     for (Row r = 0; r <= 0xFFFF; r++) {
-        moveCache[r] = moveLeftInner(r);
+        int score;
+        moveCache[r] = moveLeftInner(r, score);
+        scoreCache[r] = score;
         if (r == 65535) break; // break needed, otherwise r overflows to 0 again, and loop goes on forever
     }
 }
 
 Board RowHandler::moveLeft(const Board row) const {
-    return moveCache[row];
+    return moveCache[static_cast<Row>(row)];
 }
 
-Row RowHandler::moveLeftInner(Row row) const {
+
+// gets both the moved row and the 2048 game score from any combined tiles
+Board RowHandler::moveLeft(Board row, int &score) const {
+    score = scoreCache[static_cast<Row>(row)];
+    return moveCache[static_cast<Row>(row)];
+}
+
+// moves a row to the left.
+// two max value tiles (F in hex) combined to form another F
+// also calculates the 2048 game score from any combinations
+Row RowHandler::moveLeftInner(Row row, int &score) const {
+    score = 0;
+    int a = row & 0xF;
+    int b = (row & 0xF0) >> 4;
+    int c = (row & 0xF00) >> 8;
+    int d = (row & 0xF000) >> 12;
 
     // first, move into open spaces. Start at right hand side
-    if ((row & 0xF0) == 0) {  // 1 is open
-        row |= ((row & 0xF) << 4); // 1 gets value from 0
-        row &= ~0xF; // clear 0
+    if (b == 0) {  // 1 is open
+        b = a;
+        a = 0;
     }
-    if ((row & 0xF00) == 0) { // 2 is open
-        row |= ((row & 0xF0) << 4); // 2 gets value from 1
-        row &= ~0xF0; // clear 1
-        row |= ((row & 0xF) << 4); // 1 gets value from 0
-        row &= ~0xF; // clear 0
+    if (c == 0) { // 2 is open
+        c = b;
+        b = a;
+        a = 0;
     }
     if ((row & 0xF000) == 0) { // 3 is open
-        row |= ((row & 0xF00) << 4); // 3 gets value from 2
-        row &= ~0xF00; // clear 2
-        row |= ((row & 0xF0) << 4); // 2 gets value from 1
-        row &= ~0xF0; // clear 1
-        row |= ((row & 0xF) << 4); // 1 gets value from 0
-        row &= ~0xF; // clear 0
+        d = c;
+        c = b;
+        b = a;
+        a = 0;
     }
 
     // now, combine tiles. Start at left hand side
-    if ((row & 0xF000) == 0) return row; // don't combine zeros.
-    if ((row & 0xF000) == (row & 0xF00) << 4) {  // 3 == 2
-        row += 0x1000;  // add one to 3
-        row &= ~0xF00;   // clear 2
-        row |= ((row & 0xF0) << 4); // 2 gets value from 1
-        row &= ~0xF0; // clear 1
-        row |= ((row & 0xF) << 4); // 1 gets value from 0
-        row &= ~0xF; // clear 0
+    if (d == c && d != 0) {  // 3 == 2
+        score += (2 << d);
+        if (d != 0xF) d += 1;  // add one to 3
+        c = b; // 2 gets value from 1
+        b = a;
+        a = 0;
     }
 
-    if ((row & 0xF00) == 0) return row; // don't combine zeros.
-    if ((row & 0xF00) == (row & 0xF0) << 4) {  // 2 == 1
-        row += 0x100;  // add one to 2
-        row &= ~0xF0; // clear 1
-        row |= ((row & 0xF) << 4); // 1 gets value from 0
-        row &= ~0xF; // clear 0
+    if (c == b && c != 0) {  // 2 == 1
+        score += (2 << c);
+        if (c != 0xF) c += 1;  // add one to 2
+        b = a;
+        a = 0;
     }
 
-    if ((row & 0xF0) == 0) return row; // don't combine zeros.
-    if ((row & 0xF0) == (row & 0xF) << 4) {  // 1 == 0
-        row += 0x10;  // add one to 1
-        row &= ~0xF; // clear 0
+    if (b == a && b != 0) {  // 1 == 0
+        score += (2 << b);
+        if (b != 0xF) b += 1;  // add one to 1
+        a = 0;
     }
-    return row;
-
+    return static_cast<Row>((d << 12) + (c << 8) + (b << 4) + a);
 }
+

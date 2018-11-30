@@ -15,12 +15,15 @@ class RowHandler
 {
 public:
     RowHandler();
+    // these functions take boards instead of rows, to prevent many casting conversions.
     Board moveLeft(Board row) const;
+    Board moveLeft(Board row, int & score) const;
 
 private:
     void initCache();
-    Row moveLeftInner(Row row) const;
+    Row moveLeftInner(Row row, int & score) const;
     std::array<Row, 65536> moveCache;
+    std::array<int, 65536> scoreCache;
 };
 
 

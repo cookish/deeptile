@@ -8,6 +8,9 @@ set(CMAKE_CXX_STANDARD 14)
 set(SOURCES
         src/BoardHandler.cc
         src/RowHandler.cc
+        src/HeuristicScorer.cc
+        src/ExpectiMax.cc
+        src/Utility.cc
         )
 
 add_library(mltwo_lib ${SOURCES})

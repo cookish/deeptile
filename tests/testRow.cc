@@ -14,3 +14,24 @@ TEST_CASE( " Rows are moved left", "[moveHandler]" ) {
     auto row = Row{0x1102};
     REQUIRE(rh.moveLeft(row) == 0x2200);
 }
+
+TEST_CASE( " Max tiles are combined", "[moveHandler]" ) {
+    RowHandler rh;
+    REQUIRE(rh.moveLeft(0xFFFF) == 0xFF00);
+    REQUIRE(rh.moveLeft(0xF00F) == 0xF000);
+}
+
+TEST_CASE( " Score is calculated ", "[moveHandler]" ) {
+    RowHandler rh;
+    int score;
+    rh.moveLeft(0x3355, score);
+    REQUIRE(score == 16 + 64);
+    rh.moveLeft(0x0011, score);
+    REQUIRE(score == 4);
+    rh.moveLeft(0x00AA, score);
+    REQUIRE(score == 2048);
+    rh.moveLeft(0x00EE, score);
+    REQUIRE(score == 32768);
+    rh.moveLeft(0xF0F0, score);
+    REQUIRE(score == 65536);
+}

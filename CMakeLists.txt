@@ -11,6 +11,7 @@ set(SOURCES
         src/HeuristicScorer.cc
         src/ExpectiMax.cc
         src/Utility.cc
+        src/ScoreCache.cc
         )
 
 add_library(mltwo_lib ${SOURCES})

@@ -50,8 +50,16 @@ double ExpectiMax::getAverageSpawnRecurse(Board board, int gen, int indent) {
         double prob = 0.9 - (tile - 1) * 0.8; // 0.9 if tile==0, 0.1 if tile == 1
         for (const auto &i : possibleTiles) {
             spawnedBoard = board | (tile << (4 * i));
+            auto pBoard = bh->getPrincipalBoard(spawnedBoard);
+//            auto newGen = gen + static_cast<int>(tile);
+            auto cacheScore = cache->getScore(pBoard, newGen);
+            if (cacheScore >= 0) {
+                score += cacheScore * prob;
+            } else {
                 auto calcScore = getBestMoveRecurse(spawnedBoard, tempMove, newGen, indent + 2);
                 score += calcScore * prob;
+                cache->insertScoreSafe(pBoard, newGen, calcScore);
+            }
         }
     }
     score = score / possibleTiles.size();

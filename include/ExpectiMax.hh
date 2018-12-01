@@ -8,6 +8,7 @@
 #include "BoardHandler.hh"
 #include "Utility.hh"
 #include "ScorerInterface.hh"
+#include "ScoreCache.hh"
 
 using std::unique_ptr;
 using std::shared_ptr;
@@ -15,10 +16,14 @@ using std::shared_ptr;
 class ExpectiMax
 {
 public:
-    ExpectiMax(shared_ptr<BoardHandler> bh, shared_ptr<Utility> utility, unique_ptr<ScorerInterface> scorer)
+    ExpectiMax(shared_ptr<BoardHandler> bh,
+                   shared_ptr<Utility> utility,
+                   unique_ptr<ScorerInterface> scorer,
+                   unique_ptr<ScoreCache> cache)
         : bh(std::move(bh)),
           utility(std::move(utility)),
-          scorer(std::move(scorer))
+          scorer(std::move(scorer)),
+          cache(std::move(cache))
     {;}
     double getBestMoveRecurse(Board board, int &move, int gen, int indent = 0);
     double getAverageSpawnRecurse(Board board, int gen, int indent = 0);
@@ -29,6 +34,7 @@ private:
     shared_ptr<BoardHandler> bh;
     shared_ptr<Utility> utility;
     unique_ptr<ScorerInterface> scorer;
+    unique_ptr<ScoreCache> cache;
 
 };
 

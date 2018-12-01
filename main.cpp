@@ -3,6 +3,7 @@
 #include "ExpectiMax.hh"
 #include "Utility.hh"
 #include "HeuristicScorer.hh"
+#include "ScoreCache.hh"
 
 #include <iomanip>
 #include <iostream>
@@ -21,7 +22,7 @@ string getMoveName(int move);
 int main() {
     auto bh = make_shared<BoardHandler>(make_unique<RowHandler>());
     auto utility = make_shared<Utility>();
-    ExpectiMax em(bh, utility, make_unique<HeuristicScorer>(bh));
+    ExpectiMax em(bh, utility, make_unique<HeuristicScorer>(bh), make_unique<ScoreCache>(bh));
     em.genLimit = 4;
     em.scoreForDeath = 0;
 

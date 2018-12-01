@@ -22,7 +22,7 @@ double HeuristicScorer::getScore(Board board) {
 
 //    auto score = sumAlongLongestMonotonicCornerPath(board);
 //    auto score = sumZigZag(board);
-    auto score = sumAlongLongestMonotonicCornerPath(board) + 2*sumZigZag(board);
+    auto score = 1./3.*sumAlongLongestMonotonicCornerPath(board) + 2./3.*sumZigZag(board);
 //    cout << "==> Evaluated: score " << score << endl;
     return score;
 }

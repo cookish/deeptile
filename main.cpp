@@ -18,17 +18,27 @@ using std::make_shared;
 
 Board initBoard(Utility* utility);
 string getMoveName(int move);
+double runGame(Board &board, int genLimit, std::shared_ptr<Utility> utility, std::shared_ptr<BoardHandler> bh);
 
 int main() {
     auto bh = make_shared<BoardHandler>(make_unique<RowHandler>());
     auto utility = make_shared<Utility>();
-    ExpectiMax em(bh, utility, make_unique<HeuristicScorer>(bh), make_unique<ScoreCache>(bh));
-    em.genLimit = 4;
-    em.scoreForDeath = 0;
 
+    int genLimit = 3;
     auto board = initBoard(utility.get());
 //    Board board = 0x0001012111210013;
+//    bh->printHex(board);
+    auto score = runGame(board, genLimit, utility, bh);
+    cout << "Final score: " << score << endl;
     bh->printHex(board);
+    auto x = 1;
+    return 0;
+}
+
+double runGame(Board &board, int genLimit, std::shared_ptr<Utility> utility, std::shared_ptr<BoardHandler> bh) {
+    ExpectiMax em(bh, utility, make_unique<HeuristicScorer>(bh), make_unique<ScoreCache>(bh));
+    em.scoreForDeath = 0;
+    em.genLimit = genLimit;
     int move = 0;
     int evalCount = 0;
     double score = 0;
@@ -47,10 +57,7 @@ int main() {
 //        bh->printHex(board);
         cout << "Score: " << score << endl;
     }
-    cout << "Final score: " << score << endl;
-    bh->printHex(board);
-    auto x = 1;
-    return 0;
+    return score;
 }
 
 

@@ -20,9 +20,9 @@ public:
           utility(std::move(utility)),
           scorer(std::move(scorer))
     {;}
-    double getBestMoveRecurse(Board board, int &move, double branch, int indent=0);
-    double getAverageSpawnRecurse(Board board, double branch, int indent=0);
-    double branchLimit = 200;
+    double getBestMoveRecurse(Board board, int &move, int gen, int indent = 0);
+    double getAverageSpawnRecurse(Board board, int gen, int indent = 0);
+    double genLimit = 4;
     double scoreForDeath = 0;
 
 private:

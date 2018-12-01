@@ -8,10 +8,10 @@
 using std::cout;
 using std::endl;
 
-double ExpectiMax::getBestMoveRecurse(Board board, int &move, double branch, int indent) {
+double ExpectiMax::getBestMoveRecurse(Board board, int &move, int gen, int indent) {
     move = -1;
 
-    if (branch > branchLimit) {
+    if (gen >= genLimit) {
         return scorer->getScore(board);
     }
 
@@ -24,7 +24,7 @@ double ExpectiMax::getBestMoveRecurse(Board board, int &move, double branch, int
     double bestScore = scoreForDeath;
     auto possibleMoves = bh->getPossibleMoves(board);
     for (const auto &currentMove : possibleMoves) {
-        score = getAverageSpawnRecurse(currentMove.board, branch * possibleMoves.size(), indent+2);
+        score = getAverageSpawnRecurse(currentMove.board, gen, indent+2);
         if (score > bestScore) {
             move = currentMove.move;
             bestScore = score;
@@ -36,7 +36,7 @@ double ExpectiMax::getBestMoveRecurse(Board board, int &move, double branch, int
 }
 
 
-double ExpectiMax::getAverageSpawnRecurse(Board board, double branch, int indent) {
+double ExpectiMax::getAverageSpawnRecurse(Board board, int gen, int indent) {
 //    for (int i = 0; i < indent; i++) cout << " ";
 //    cout << "getAverageSpawnRecurse: evaluating board:" << endl;
 //    bh->printHex(board, indent);
@@ -45,12 +45,13 @@ double ExpectiMax::getAverageSpawnRecurse(Board board, double branch, int indent
 
     double score = 0;
     int tempMove = 0;
+    auto newGen = gen + 1;
     for (Board tile = 1; tile <= 2; ++tile) {
         double prob = 0.9 - (tile - 1) * 0.8; // 0.9 if tile==0, 0.1 if tile == 1
-        double newBranch = branch * possibleTiles.size() / prob;
         for (const auto &i : possibleTiles) {
             spawnedBoard = board | (tile << (4 * i));
-            score += getBestMoveRecurse(spawnedBoard, tempMove, newBranch, indent+2) * prob;
+                auto calcScore = getBestMoveRecurse(spawnedBoard, tempMove, newGen, indent + 2);
+                score += calcScore * prob;
         }
     }
     score = score / possibleTiles.size();

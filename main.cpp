@@ -22,7 +22,7 @@ int main() {
     auto bh = make_shared<BoardHandler>(make_unique<RowHandler>());
     auto utility = make_shared<Utility>();
     ExpectiMax em(bh, utility, make_unique<HeuristicScorer>(bh));
-    em.branchLimit = 500;
+    em.genLimit = 4;
     em.scoreForDeath = 0;
 
     auto board = initBoard(utility.get());
@@ -30,9 +30,9 @@ int main() {
     bh->printHex(board);
     int move = 0;
     int evalCount = 0;
-    int score = 0;
+    double score = 0;
     while (true) {
-        em.getBestMoveRecurse(board, move, 1, evalCount);
+        em.getBestMoveRecurse(board, move, 0, evalCount);
         if (move < 0) break;
 //        cout << "Moving " << getMoveName(move) << endl;
         score += bh->moveAndScore(board, move);

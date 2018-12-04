@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(mltwo)
+project(deeptile)
 
 include_directories(include)
 
@@ -17,8 +17,8 @@ set(SOURCES
         src/JsonStats.cc
         )
 
-add_library(mltwo_lib ${SOURCES})
-add_executable(mltwo main.cpp)
-target_link_libraries(mltwo mltwo_lib)
+add_library(deeptile_lib ${SOURCES})
+add_executable(deeptile main.cpp)
+target_link_libraries(deeptile deeptile_lib)
 
 add_subdirectory(tests)

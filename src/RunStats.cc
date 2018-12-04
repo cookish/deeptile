@@ -20,6 +20,7 @@ RunStats::RunStats(const std::vector<GameStats> &games) {
             moves += game.moves * 1. / numGames;
             cachedEvals += game.cachedEvals * 1. / numGames;
             leafEvals += game.leafEvals * 1. / numGames;
+            totalEvals += game.totalEvals * 1. / numGames;
             for (int i = 0; i < cachedEvalsPerGen.size(); ++i) {
                 cacheHitsPerGen[i] += game.cacheHitsPerGen[i] * 1. / numGames;
                 cacheMissesPerGen[i] += game.cacheMissesPerGen[i] * 1. / numGames;

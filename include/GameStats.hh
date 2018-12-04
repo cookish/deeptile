@@ -18,6 +18,7 @@ public:
     int moves = 0;
     int cachedEvals = 0;
     int leafEvals = 0;
+    int totalEvals = 0;
     vector<int> cacheHitsPerGen;
     vector<int> cacheMissesPerGen;
     vector<int> totalEvalsPerGen;

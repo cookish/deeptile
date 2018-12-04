@@ -154,6 +154,7 @@ runGame(Board startBoard,
     stats->boardTotal = bh->getBoardTotal(stats->finalBoard);
     stats->moves = i;
     stats->timeTaken = timeTaken;
+    stats->totalEvals = totalEvals;
     return stats;
 }
 

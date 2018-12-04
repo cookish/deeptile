@@ -18,6 +18,7 @@ public:
     double moves = 0;
     double cachedEvals = 0;
     double leafEvals = 0;
+    double totalEvals = 0;
     vector<double> cacheHitsPerGen;
     vector<double> cacheMissesPerGen;
     vector<double> totalEvalsPerGen;

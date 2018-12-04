@@ -13,7 +13,11 @@ I love the concept of emerging intelligence, without providing human wisdom.
 1. Automate the cross-over between game and neural net. Each set of games generates a set of board positions and labels, which trains the AI, which improves for the next set of games
 1. Optimise AI, try different architectures etc.
 
-## AI strategy
+## Current Status
+Basic gameplay in place. Can play several games in parallel and compile stats. Basic un-optimised heuristic to judge board positions. No pruning in place for expectimax algorithm... maximum depth is about 4.  
+No deep learning added yet.
+
+## AI Strategy
 
 Suggest getting the AI to predict the number of moves left before death. Perhaps log(moves).  
 When evaluating in the expectimax tree, each combination of boards can be a new training board.

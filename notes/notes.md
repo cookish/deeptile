@@ -1,9 +1,10 @@
 ### Todo
  * [d] Change from 2048 game score to total on board
  * [d] Store num evaluations that went into each cached score
- * Collect better stats per game (see below)
+ * [d] Collect better stats per game (see below)
  * [d] Change from counting generations up to counting down. Pass the total number of generations needed.
- * Start pruning the cache. Either generate from scratch each move, or prune boards < current move. This allows sharing between moves, but might make be slower. Need to test empirically.
+ * [d] Start pruning the cache. Either generate from scratch each move, or prune boards < current move. This allows sharing between moves, but might make be slower. Need to test empirically.
+ * Start tracking inverse probability through expectimax
  
 ### Notes on collecting stats
 Always want: 
@@ -29,7 +30,7 @@ If tweaking conditional expectimax start conditions:
 ### Studies to do
  * Better to calc principal board value first, then check score, or to store in cache for each equivalent board position.
 
- * Clear cache completely per move, or prune out smaller board positions? If prune, how often?
+ * [d] Clear cache completely per move, or prune out smaller board positions? If prune, how often?
 
  * Evaluate after move or after spawn or both (two separate caches)?
 

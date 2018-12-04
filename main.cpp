@@ -39,8 +39,9 @@ void runThread(vector<Board> &boards, std::mutex &boardMutex,
                string name);
 
 int main() {
-    size_t numGames = 2;
-    size_t numThreads = 2;
+    size_t numGames = 50;
+    size_t numThreads = 5;
+    int generations = 2;
 
     auto bh = make_shared<BoardHandler>(make_unique<RowHandler>());
     auto utility = make_shared<Utility>();
@@ -48,7 +49,6 @@ int main() {
     std::mutex boardMutex;
     std::mutex resultMutex;
 
-    int generations = 2;
     std::vector<std::thread> threads;
     std::vector<Board> boards;
     std::vector<GameStats> results;

@@ -67,13 +67,14 @@ int main() {
     for (auto &thread : threads) {
         thread.join();
     }
-    auto totalScore = 0.;
+    auto overallTotal = 0.;
     for (const auto &result : results) {
-        totalScore += result.score;
-        cout << "Score: " << result.score << endl;
         bh->printHex(result.finalBoard);
+        auto total = bh->getBoardTotal(result.finalBoard);
+        overallTotal += total;
+        cout << "Total: " << total << endl;
     }
-    cout << "Average score: " << totalScore / numGames << endl;
+    cout << "Average total: " << overallTotal / numGames << endl;
 
     return 0;
 }
@@ -100,7 +101,8 @@ void runThread(vector<Board> &boards, std::mutex &boardMutex,
         {
             std::lock_guard<std::mutex> lock(resultMutex);
             results.emplace_back(result);
-            cout << name << " completed game " << results.size() << ", score: " << result.score << endl;
+            cout << name << " completed game " << results.size()
+            << ", total: " << bh->getBoardTotal(result.finalBoard) << endl;
         }
     }
 }
@@ -133,7 +135,7 @@ runGame(Board startBoard,
         board |= (utility->coinToss(0.9) ? (1ull << (4 * place)) : (2ull << (4 * place)));
 //        bh->printHex(board);
     //    if (i % 500 == 0) {
-            cout << name << " >> " << " move: " << i << ", score: " << score << endl;
+//            cout << name << " >> " << " move: " << i << ", score: " << score << endl;
      //   }
     }
     cout << name << " >> " << " move: " << i << ", score: " << score << endl;

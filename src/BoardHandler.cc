@@ -142,6 +142,15 @@ vector<int> BoardHandler::getPossibleSpawns(Board board) const {
     return v;
 }
 
+int BoardHandler::getBoardTotal(Board board) const {
+    auto total = 0;
+    for (int i=0; i < 16; i++) {
+        auto tile = board & 0xF;
+        total += (tile == 0) ? 0 : 1 << tile;
+        board = board >> 4;
+    }
+    return total;
+}
 
 void BoardHandler::printHex(const Board board, int indent) const {
     for (int i = 0; i < indent; i++) cout << " ";

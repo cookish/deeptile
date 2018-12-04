@@ -39,7 +39,7 @@ void runThread(vector<Board> &boards, std::mutex &boardMutex,
                string name);
 
 int main() {
-    size_t numGames = 20 ;
+    size_t numGames = 1;
     size_t numThreads = 1;
 
     auto bh = make_shared<BoardHandler>(make_unique<RowHandler>());
@@ -122,7 +122,8 @@ runGame(Board startBoard,
     double score = 0;
     int i;
     for (i = 0; true; ++i) {
-        em.getBestMoveRecurse(board, move, 0, evalCount);
+        int numEvals = 0;
+        em.getBestMoveRecurse(board, move, 0, numEvals, evalCount);
         if (move < 0) break;
 //        cout << "Moving " << getMoveName(move) << endl;
         score += bh->moveAndScore(board, move);
@@ -135,7 +136,8 @@ runGame(Board startBoard,
         board |= (utility->coinToss(0.9) ? (1ull << (4 * place)) : (2ull << (4 * place)));
 //        bh->printHex(board);
     //    if (i % 500 == 0) {
-//            cout << name << " >> " << " move: " << i << ", score: " << score << endl;
+            cout << name << " >> " << " move: " << i << ", score: " << score
+                 << ", numEvals: " << numEvals << endl;
      //   }
     }
     cout << name << " >> " << " move: " << i << ", score: " << score << endl;

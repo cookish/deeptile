@@ -8,10 +8,11 @@
 using std::cout;
 using std::endl;
 
-double ExpectiMax::getBestMoveRecurse(Board board, int &move, int gen, int indent) {
+double ExpectiMax::getBestMoveRecurse(Board board, int &move, int gen, int &numEvals, int indent) {
     move = -1;
 
     if (gen >= genLimit) {
+        numEvals = 1;
         return scorer->getScore(board);
     }
 
@@ -24,7 +25,9 @@ double ExpectiMax::getBestMoveRecurse(Board board, int &move, int gen, int inden
     double bestScore = scoreForDeath;
     auto possibleMoves = bh->getPossibleMoves(board);
     for (const auto &currentMove : possibleMoves) {
-        score = getAverageSpawnRecurse(currentMove.board, gen, indent+2);
+        int tmpEvals = 0;
+        score = getAverageSpawnRecurse(currentMove.board, gen, tmpEvals, indent + 2);
+        numEvals += tmpEvals;
         if (score > bestScore) {
             move = currentMove.move;
             bestScore = score;
@@ -36,7 +39,7 @@ double ExpectiMax::getBestMoveRecurse(Board board, int &move, int gen, int inden
 }
 
 
-double ExpectiMax::getAverageSpawnRecurse(Board board, int gen, int indent) {
+double ExpectiMax::getAverageSpawnRecurse(Board board, int gen, int &numEvals, int indent) {
 //    for (int i = 0; i < indent; i++) cout << " ";
 //    cout << "getAverageSpawnRecurse: evaluating board:" << endl;
 //    bh->printHex(board, indent);
@@ -52,13 +55,16 @@ double ExpectiMax::getAverageSpawnRecurse(Board board, int gen, int indent) {
             spawnedBoard = board | (tile << (4 * i));
             auto pBoard = bh->getPrincipalBoard(spawnedBoard);
 //            auto newGen = gen + static_cast<int>(tile);
-            auto cacheScore = cache->getScore(pBoard, newGen);
-            if (cacheScore >= 0) {
-                score += cacheScore * prob;
+            auto cacheVal = cache->get(pBoard, newGen);
+            if (cacheVal.score >= 0) {
+                score += cacheVal.score * prob;
+                numEvals += cacheVal.numEvals;
             } else {
-                auto calcScore = getBestMoveRecurse(spawnedBoard, tempMove, newGen, indent + 2);
+                int tmpEvals = 0;
+                auto calcScore = getBestMoveRecurse(spawnedBoard, tempMove, newGen, tmpEvals, indent + 2);
+                numEvals += tmpEvals;
                 score += calcScore * prob;
-                cache->insertScoreSafe(pBoard, newGen, calcScore);
+                cache->insertScoreSafe(pBoard, newGen, calcScore, tmpEvals);
             }
         }
     }

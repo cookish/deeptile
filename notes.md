@@ -1,5 +1,5 @@
 ### Todo
- * Change from 2048 game score to total on board
+ * [d] Change from 2048 game score to total on board
  * Store num evaluations that went into each cached score
  * Collect better stats per game
    * total number of moves

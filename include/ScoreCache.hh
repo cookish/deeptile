@@ -10,21 +10,22 @@
 #include <unordered_map>
 using std::unordered_map;
 
-struct ScoreGen {
+struct CacheVal {
     double score;
     int gen;
+    int numEvals;
 };
 
 class ScoreCache
 {
 public:
     explicit ScoreCache(std::shared_ptr<BoardHandler> bh) : bh(std::move(bh)) {;}
-    double getScore(Board pBoard, int gen) const;
-    void insertScoreSafe(Board pBoard, int gen, double score);
-    void insertScore(Board board, int gen, double score);
+    CacheVal get(Board pBoard, int gen) const;
+    void insertScoreSafe(Board pBoard, int gen, double score, int numEvals);
+    void insertScore(Board pBoard, int gen, double score, int numEvals);
 
 private:
-    unordered_map<Board, ScoreGen> cache;
+    unordered_map<Board, CacheVal> cache;
     std::shared_ptr<BoardHandler> bh;
 };
 

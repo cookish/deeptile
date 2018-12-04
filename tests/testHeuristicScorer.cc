@@ -12,6 +12,6 @@ using std::endl;
 HeuristicScorer h;
 
 TEST_CASE( " Score calculated", "[heuristicScorer]" ) {
-//    REQUIRE(h.getScore(0x3321) == 22);
+//    REQUIRE(h.get(0x3321) == 22);
     REQUIRE(h.getScore(0x2100000001122000) == 8);
 }

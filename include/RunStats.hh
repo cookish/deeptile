@@ -22,6 +22,11 @@ public:
     vector<double> totalEvalsPerGen;
     vector<double> cachedEvalsPerGen;
     vector<double> nodesPerGen;
+    void printRateInfo();
+    void printCacheInfo();
+
+private:
+    size_t numGens = 0;
 };
 
 

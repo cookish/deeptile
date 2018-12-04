@@ -78,6 +78,8 @@ int main() {
     RunStats runStats(results);
     auto js = JsonStats::create(runStats);
     std::cout << js.dump(4) << std::endl;
+    runStats.printRateInfo();
+    runStats.printCacheInfo();
     return 0;
 }
 
@@ -141,13 +143,13 @@ runGame(Board startBoard,
 //        cout << "Putting tile in place " << place << endl;
         board |= (utility->coinToss(0.9) ? (1ull << (4 * place)) : (2ull << (4 * place)));
 //        bh->printHex(board);
-    //    if (i % 500 == 0) {
+//        if (i % 500 == 0) {
 //            cout << name << " >> " << " move: " << i << ", score: " << score
 //                 << ", numEvals: " << numEvals << endl;
-     //   }
+//        }
     }
     auto timeTaken = std::chrono::duration_cast<std::chrono::duration<double> >(steady_clock::now() - start).count();
-    cout << name << " >> " << " move: " << i << ", score: " << score << endl;
+//    cout << name << " >> " << " move: " << i << ", score: " << score << endl;
     auto stats = em.getFinalStats();
     stats->finalBoard = board;
     stats->startBoard = startBoard;

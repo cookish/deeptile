@@ -4,11 +4,15 @@
 
 #include "RunStats.hh"
 
+#include <iostream>
+using std::cout;
+using std::endl;
+
 RunStats::RunStats(const std::vector<GameStats> &games) {
     auto numGames = games.size();
 
     if (numGames > 0) {
-        auto numGens = games[0].cacheHitsPerGen.size();
+        numGens = games[0].cacheHitsPerGen.size();
         cacheHitsPerGen.resize(numGens);
         cacheMissesPerGen.resize(numGens);
         totalEvalsPerGen.resize(numGens);
@@ -42,11 +46,30 @@ RunStats::RunStats(const std::vector<GameStats> &games) {
             }
         }
         if (nonZeroGens != numGens) {
-            cacheHitsPerGen.resize(nonZeroGens);
-            cacheMissesPerGen.resize(nonZeroGens);
-            totalEvalsPerGen.resize(nonZeroGens);
-            cachedEvalsPerGen.resize(nonZeroGens);
-            nodesPerGen.resize(nonZeroGens);
+            numGens = nonZeroGens;
+            cacheHitsPerGen.resize(numGens);
+            cacheMissesPerGen.resize(numGens);
+            totalEvalsPerGen.resize(numGens);
+            cachedEvalsPerGen.resize(numGens);
+            nodesPerGen.resize(numGens);
         }
+    }
+}
+
+void RunStats::printRateInfo() {
+    cout << "Evaluations/s: " << (d["leafEvals"] / d["timeTaken"])
+         << ", moves/s: " << (d["moves"] / d["timeTaken"])
+         << endl;
+}
+
+void RunStats::printCacheInfo() {
+    cout << "Overall leaf evals fraction: " << d["leafEvals"] / d["totalEvals"] << endl;
+    cout << "Per generation:" << endl;
+    for (auto i=0; i<numGens; ++i) {
+        cout << "  Gen " << i << " > "
+             << "cache hits: " << cacheHitsPerGen[i] *1. / (cacheHitsPerGen[i] + cacheMissesPerGen[i])
+             << ", cached evals: " << cachedEvalsPerGen[i] * 1. / totalEvalsPerGen[i]
+             << ", evals per node: " << totalEvalsPerGen[i] * 1. / nodesPerGen[i]
+             << endl;
     }
 }

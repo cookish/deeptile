@@ -5,7 +5,8 @@
 #include "HeuristicScorer.hh"
 #include "ScoreCache.hh"
 #include "GameStats.hh"
-
+#include "RunStats.hh"
+#include "JsonStats.hh"
 
 #include <thread>
 #include <iomanip>
@@ -17,7 +18,6 @@ using std::endl;
 using std::string;
 
 #include <chrono>
-#include <RunStats.hh>
 using std::chrono::steady_clock;
 
 using std::make_unique;
@@ -39,8 +39,8 @@ void runThread(vector<Board> &boards, std::mutex &boardMutex,
                string name);
 
 int main() {
-    size_t numGames = 1;
-    size_t numThreads = 1;
+    size_t numGames = 2;
+    size_t numThreads = 2;
 
     auto bh = make_shared<BoardHandler>(make_unique<RowHandler>());
     auto utility = make_shared<Utility>();
@@ -76,7 +76,8 @@ int main() {
     }
     cout << "Average total: " << overallTotal / numGames << endl;
     RunStats runStats(results);
-
+    auto js = JsonStats::create(runStats);
+    std::cout << js.dump(4) << std::endl;
     return 0;
 }
 

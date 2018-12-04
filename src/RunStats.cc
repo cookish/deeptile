@@ -28,5 +28,21 @@ RunStats::RunStats(const std::vector<GameStats> &games) {
                 cachedEvalsPerGen[i] += game.cachedEvalsPerGen[i] * 1. / numGames;
             }
         }
+        size_t nonZeroGens = 0;
+        for (nonZeroGens=0; nonZeroGens<numGens; ++nonZeroGens) {
+            if (cacheHitsPerGen[nonZeroGens] == 0
+                && cacheMissesPerGen[nonZeroGens] == 0
+                && totalEvalsPerGen[nonZeroGens] == 0
+                && cachedEvalsPerGen[nonZeroGens] == 0)
+            {
+                break;
+            }
+        }
+        if (nonZeroGens != numGens) {
+            cacheHitsPerGen.resize(nonZeroGens);
+            cacheMissesPerGen.resize(nonZeroGens);
+            totalEvalsPerGen.resize(nonZeroGens);
+            cachedEvalsPerGen.resize(nonZeroGens);
+        }
     }
 }

@@ -32,6 +32,7 @@ public:
     double getAverageSpawnRecurse(Board board, int gens, int &numEvals, int indent = 0);
     double scoreForDeath = 0;
     unique_ptr<GameStats> getFinalStats() { return std::move(stats); }
+    void pruneCache(Board board);
 
 private:
     shared_ptr<BoardHandler> bh;

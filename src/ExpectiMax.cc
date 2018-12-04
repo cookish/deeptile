@@ -90,3 +90,6 @@ double ExpectiMax::getAverageSpawnRecurse(Board board, int gens, int &numEvals, 
     return score;
 }
 
+void ExpectiMax::pruneCache(Board board) {
+    cache->prune(board, bh.get());
+}

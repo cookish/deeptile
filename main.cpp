@@ -131,6 +131,7 @@ runGame(Board startBoard,
         int numEvals = 0;
 
         em.getBestMoveRecurse(board, move, gens, numEvals, evalCount);
+        em.pruneCache(board);
         totalEvals += numEvals;
         if (move < 0) break;
 //        cout << "Moving " << getMoveName(move) << endl;

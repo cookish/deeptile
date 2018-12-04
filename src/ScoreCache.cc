@@ -4,6 +4,10 @@
 
 #include "ScoreCache.hh"
 
+#include <iostream>
+using std::cout;
+using std::endl;
+
 CacheVal ScoreCache::get(Board pBoard, int gen) const {
 //    return -1;
     auto f = cache.find(pBoard);
@@ -27,4 +31,19 @@ void ScoreCache::insertScoreSafe(Board pBoard, int gen, double score, int numEva
 
 void ScoreCache::insertScore(Board pBoard, int gen, double score, int numEvals) {
     cache[pBoard] = CacheVal{score, gen, numEvals};
+}
+
+void ScoreCache::prune(Board board, BoardHandler *bh) {
+//    cout << "size before: " << cache.size() << endl;
+    cache.clear();
+    // The code below prunes nicely, but gains not worth the cost. Try again when generations are deeper.
+//    auto thresh = bh->getBoardTotal(board);
+//    decltype(cache) newCache;
+//    for (auto &&i : cache) {
+//        if (bh->getBoardTotal(i.first) >= thresh) {
+//            newCache.emplace(i);
+//        }
+//    }
+//    cache.swap(newCache);
+//    cout << "size after: " << cache.size() << endl;
 }

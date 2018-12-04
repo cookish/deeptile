@@ -23,6 +23,7 @@ public:
     CacheVal get(Board pBoard, int gen) const;
     void insertScoreSafe(Board pBoard, int gen, double score, int numEvals);
     void insertScore(Board pBoard, int gen, double score, int numEvals);
+    void prune(Board board, BoardHandler* bh);
 
 private:
     unordered_map<Board, CacheVal> cache;

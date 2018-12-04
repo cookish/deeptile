@@ -24,6 +24,13 @@ void RowHandler::initCache() {
         int score;
         moveCache[r] = moveLeftInner(r, score);
         scoreCache[r] = score;
+
+        auto total = 0;
+        for (int i=0; i < 4; i++) {
+            auto tile = (r & (0xF << (4*i))) >> (4*i);
+            total += (tile == 0) ? 0 : (1 << tile);
+        }
+        totalCache[r] = total;
         if (r == 65535) break; // break needed, otherwise r overflows to 0 again, and loop goes on forever
     }
 }
@@ -37,6 +44,10 @@ Board RowHandler::moveLeft(const Board row) const {
 Board RowHandler::moveLeft(Board row, int &score) const {
     score = scoreCache[static_cast<Row>(row)];
     return moveCache[static_cast<Row>(row)];
+}
+
+int RowHandler::getTotal(Board row) const {
+    return totalCache[row];
 }
 
 // moves a row to the left.

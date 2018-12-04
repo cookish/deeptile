@@ -18,12 +18,14 @@ public:
     // these functions take boards instead of rows, to prevent many casting conversions.
     Board moveLeft(Board row) const;
     Board moveLeft(Board row, int & score) const;
+    int getTotal(Board row) const;
 
 private:
     void initCache();
     Row moveLeftInner(Row row, int & score) const;
     std::array<Row, 65536> moveCache;
     std::array<int, 65536> scoreCache;
+    std::array<int, 65536> totalCache;
 };
 
 

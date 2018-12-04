@@ -12,6 +12,7 @@ set(SOURCES
         src/ExpectiMax.cc
         src/Utility.cc
         src/ScoreCache.cc
+        src/GameStats.cc
         )
 
 add_library(mltwo_lib ${SOURCES})

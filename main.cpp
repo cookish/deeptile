@@ -4,6 +4,8 @@
 #include "Utility.hh"
 #include "HeuristicScorer.hh"
 #include "ScoreCache.hh"
+#include "GameStats.hh"
+
 
 #include <thread>
 #include <iomanip>
@@ -14,25 +16,22 @@ using std::endl;
 #include <string>
 using std::string;
 
+#include <chrono>
+using std::chrono::steady_clock;
+
 using std::make_unique;
 using std::make_shared;
 
-struct GameResult {
-    Board startBoard;
-    Board finalBoard;
-    double score;
-};
-
 Board initBoard(Utility* utility);
 string getMoveName(int move);
-GameResult
+unique_ptr<GameStats>
 runGame(Board startBoard,
         int gens,
         const shared_ptr<Utility> &utility,
         const shared_ptr<BoardHandler> &bh,
         string name);
 void runThread(vector<Board> &boards, std::mutex &boardMutex,
-               vector<GameResult> &results, std::mutex &resultMutex,
+               vector<GameStats> &results, std::mutex &resultMutex,
                int gens,
                const std::shared_ptr<Utility> &utility,
                const std::shared_ptr<BoardHandler> &bh,
@@ -48,10 +47,10 @@ int main() {
     std::mutex boardMutex;
     std::mutex resultMutex;
 
-    int generations = 1;
+    int generations = 2;
     std::vector<std::thread> threads;
     std::vector<Board> boards;
-    std::vector<GameResult> results;
+    std::vector<GameStats> results;
     threads.reserve(numGames);
     boards.reserve(numGames);
     results.reserve(numGames);
@@ -80,7 +79,7 @@ int main() {
 }
 
 void runThread(vector<Board> &boards, std::mutex &boardMutex,
-               vector<GameResult> &results, std::mutex &resultMutex,
+               vector<GameStats> &results, std::mutex &resultMutex,
                int gens,
                const std::shared_ptr<Utility> &utility,
                const std::shared_ptr<BoardHandler> &bh,
@@ -100,29 +99,34 @@ void runThread(vector<Board> &boards, std::mutex &boardMutex,
         auto result = runGame(board, gens, utility, bh, name);
         {
             std::lock_guard<std::mutex> lock(resultMutex);
-            results.emplace_back(result);
+            results.emplace_back(*std::move(result));
             cout << name << " completed game " << results.size()
-            << ", total: " << bh->getBoardTotal(result.finalBoard) << endl;
+            << ", total: " << bh->getBoardTotal(result->finalBoard) << endl;
         }
     }
 }
 
-GameResult
+unique_ptr<GameStats>
 runGame(Board startBoard,
         int gens,
         const shared_ptr<Utility> &utility,
         const shared_ptr<BoardHandler> &bh,
         string name) {
     auto board = startBoard;
-    ExpectiMax em(bh, utility, make_unique<HeuristicScorer>(bh), make_unique<ScoreCache>(bh));
+    ExpectiMax em(bh, utility, make_unique<HeuristicScorer>(bh), make_unique<ScoreCache>(bh), make_unique<GameStats>());
     em.scoreForDeath = 0;
     int move = 0;
     int evalCount = 0;
     double score = 0;
     int i;
+
+    auto start = steady_clock::now();
+    int totalEvals = 0;
     for (i = 0; true; ++i) {
         int numEvals = 0;
+
         em.getBestMoveRecurse(board, move, gens, numEvals, evalCount);
+        totalEvals += numEvals;
         if (move < 0) break;
 //        cout << "Moving " << getMoveName(move) << endl;
         score += bh->moveAndScore(board, move);
@@ -139,8 +143,16 @@ runGame(Board startBoard,
                  << ", numEvals: " << numEvals << endl;
      //   }
     }
+    auto timeTaken = std::chrono::duration_cast<std::chrono::duration<double> >(steady_clock::now() - start).count();
     cout << name << " >> " << " move: " << i << ", score: " << score << endl;
-    return {startBoard, board, score};
+    auto stats = em.getFinalStats();
+    stats->finalBoard = board;
+    stats->startBoard = startBoard;
+    stats->score = score;
+    stats->boardTotal = bh->getBoardTotal(stats->finalBoard);
+    stats->moves = i;
+    stats->timeTaken = timeTaken;
+    return stats;
 }
 
 

@@ -13,7 +13,7 @@ double ExpectiMax::getBestMoveRecurse(Board board, int &move, int gens, int &num
 
     if (gens == 0) {
         numEvals = 1;
-        ++gameStats.leafEvals;
+        ++stats->leafEvals;
         return scorer->getScore(board);
     }
 
@@ -47,6 +47,9 @@ double ExpectiMax::getAverageSpawnRecurse(Board board, int gens, int &numEvals, 
     Board spawnedBoard;
     auto possibleTiles = bh->getPossibleSpawns(board);
 
+    int cachedEvals = 0;
+    int cacheHits = 0;
+    int cacheMisses = 0;
     double score = 0;
     int tempMove = 0;
     auto newGens = gens - 1;
@@ -57,21 +60,27 @@ double ExpectiMax::getAverageSpawnRecurse(Board board, int gens, int &numEvals, 
             auto pBoard = bh->getPrincipalBoard(spawnedBoard);
 //            auto newGens = gens - static_cast<int>(tile);
             auto cacheVal = cache->get(pBoard, newGens);
-            if (cacheVal.score >= 0) {
+            if (cacheVal.score >= 0) {  // found a cached result
                 score += cacheVal.score * prob;
-                numEvals += cacheVal.numEvals;
-                gameStats.cachedEvals += cacheVal.numEvals;
-                ++gameStats.cacheHits;
+                cachedEvals += cacheVal.numEvals;
+                ++cacheHits;
             } else {
                 int tmpEvals = 0;
                 auto calcScore = getBestMoveRecurse(spawnedBoard, tempMove, newGens, tmpEvals, indent + 2);
                 numEvals += tmpEvals;
                 score += calcScore * prob;
                 cache->insertScoreSafe(pBoard, newGens, calcScore, tmpEvals);
-                ++gameStats.cacheMisses;
+                ++cacheMisses;
             }
         }
     }
+    numEvals += cachedEvals;
+    stats->cachedEvalsPerGen[newGens] += cachedEvals;
+    stats->totalEvalsPerGen[newGens] += numEvals;
+    stats->cachedEvals += cachedEvals;
+    stats->cacheHitsPerGen[newGens] += cacheHits;
+    stats->cacheMissesPerGen[newGens] += cacheMisses;
+
     score = score / possibleTiles.size();
 //    for (int i = 0; i < indent; i++) cout << " ";
 //    cout << "getAverageSpawnRecurse: returning score:" << score << endl;

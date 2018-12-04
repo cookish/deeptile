@@ -1,16 +1,30 @@
 ### Todo
  * [d] Change from 2048 game score to total on board
- * Store num evaluations that went into each cached score
- * Collect better stats per game
-   * total number of moves
-   * time taken
-   * evaluations per sec
-   * moves per sec
-   * distribution of evaluations per move. Std dev?
-   * Distribution of cache hit rates per generation
-   * Different types of evaluations per generation... cached evaluation, speculative evaluations (i.e. to judge move probabilities), leaf evaluations
- * Change from counting generations up to counting down. Pass the total number of generations needed.
+ * [d] Store num evaluations that went into each cached score
+ * Collect better stats per game (see below)
+ * [d] Change from counting generations up to counting down. Pass the total number of generations needed.
  * Start pruning the cache. Either generate from scratch each move, or prune boards < current move. This allows sharing between moves, but might make be slower. Need to test empirically.
+ 
+### Notes on collecting stats
+Always want: 
+ * average board total
+ 
+If evaluating performance based tweaks, want:
+ * Evaluations per sec
+ * Moves per sec
+ 
+If evaluating cache tweaks, want:
+ * cache hit ratio
+ * cache hit ratio per generation
+ * leaf evaluations vs cached evaluations
+ 
+If tweaking expectimax pruning:
+ * evaluations per generation
+
+If tweaking conditional expectimax start conditions:
+ * evaluations per move graphed against board total graphed against predicted score
+  
+ 
 
 ### Studies to do
  * Better to calc principal board value first, then check score, or to store in cache for each equivalent board position.

@@ -50,6 +50,7 @@ double ExpectiMax::getAverageSpawnRecurse(Board board, int gens, int &numEvals, 
     int cachedEvals = 0;
     int cacheHits = 0;
     int cacheMisses = 0;
+    int numNodes = 0;
     double score = 0;
     int tempMove = 0;
     auto newGens = gens - 1;
@@ -60,6 +61,7 @@ double ExpectiMax::getAverageSpawnRecurse(Board board, int gens, int &numEvals, 
             auto pBoard = bh->getPrincipalBoard(spawnedBoard);
 //            auto newGens = gens - static_cast<int>(tile);
             auto cacheVal = cache->get(pBoard, newGens);
+            ++numNodes;
             if (cacheVal.score >= 0) {  // found a cached result
                 score += cacheVal.score * prob;
                 cachedEvals += cacheVal.numEvals;
@@ -80,6 +82,7 @@ double ExpectiMax::getAverageSpawnRecurse(Board board, int gens, int &numEvals, 
     stats->cachedEvals += cachedEvals;
     stats->cacheHitsPerGen[newGens] += cacheHits;
     stats->cacheMissesPerGen[newGens] += cacheMisses;
+    stats->nodesPerGen[newGens] += numNodes;
 
     score = score / possibleTiles.size();
 //    for (int i = 0; i < indent; i++) cout << " ";

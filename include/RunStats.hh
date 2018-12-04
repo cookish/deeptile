@@ -21,6 +21,7 @@ public:
     vector<double> cacheMissesPerGen;
     vector<double> totalEvalsPerGen;
     vector<double> cachedEvalsPerGen;
+    vector<double> nodesPerGen;
 };
 
 

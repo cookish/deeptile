@@ -13,6 +13,7 @@ RunStats::RunStats(const std::vector<GameStats> &games) {
         cacheMissesPerGen.resize(numGens);
         totalEvalsPerGen.resize(numGens);
         cachedEvalsPerGen.resize(numGens);
+        nodesPerGen.resize(numGens);
         for (const auto &game : games) {
             d["score"] += game.score * 1. / numGames;
             d["boardTotal"] += game.boardTotal * 1. / numGames;
@@ -26,6 +27,7 @@ RunStats::RunStats(const std::vector<GameStats> &games) {
                 cacheMissesPerGen[i] += game.cacheMissesPerGen[i] * 1. / numGames;
                 totalEvalsPerGen[i] += game.totalEvalsPerGen[i] * 1. / numGames;
                 cachedEvalsPerGen[i] += game.cachedEvalsPerGen[i] * 1. / numGames;
+                nodesPerGen[i] += game.nodesPerGen[i] * 1. / numGames;
             }
         }
         size_t nonZeroGens = 0;
@@ -33,7 +35,8 @@ RunStats::RunStats(const std::vector<GameStats> &games) {
             if (cacheHitsPerGen[nonZeroGens] == 0
                 && cacheMissesPerGen[nonZeroGens] == 0
                 && totalEvalsPerGen[nonZeroGens] == 0
-                && cachedEvalsPerGen[nonZeroGens] == 0)
+                && cachedEvalsPerGen[nonZeroGens] == 0
+                && nodesPerGen[nonZeroGens] == 0)
             {
                 break;
             }
@@ -43,6 +46,7 @@ RunStats::RunStats(const std::vector<GameStats> &games) {
             cacheMissesPerGen.resize(nonZeroGens);
             totalEvalsPerGen.resize(nonZeroGens);
             cachedEvalsPerGen.resize(nonZeroGens);
+            nodesPerGen.resize(nonZeroGens);
         }
     }
 }

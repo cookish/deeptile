@@ -14,5 +14,6 @@ nlohmann::json JsonStats::create(const RunStats &rs) {
     j["cacheMissesPerGen"] = json(rs.cacheMissesPerGen);
     j["totalEvalsPerGen"] = json(rs.totalEvalsPerGen);
     j["cachedEvalsPerGen"] = json(rs.cachedEvalsPerGen);
+    j["nodesPerGen"] = json(rs.nodesPerGen);
     return j;
 }

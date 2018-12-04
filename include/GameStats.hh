@@ -23,6 +23,7 @@ public:
     vector<int> cacheMissesPerGen;
     vector<int> totalEvalsPerGen;
     vector<int> cachedEvalsPerGen;
+    vector<int> nodesPerGen;
 //    void printResult() const {
 //        cout << "Total: " << boardTotal << ", score: " << score << ", "
 //    }

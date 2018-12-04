@@ -8,5 +8,6 @@ GameStats::GameStats()
     : cacheHitsPerGen(vector<int>(10)),
       cacheMissesPerGen(vector<int>(10)),
       totalEvalsPerGen(vector<int>(10)),
-      cachedEvalsPerGen(vector<int>(10))
+      cachedEvalsPerGen(vector<int>(10)),
+      nodesPerGen(vector<int>(10))
 {;}

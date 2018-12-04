@@ -14,13 +14,13 @@ RunStats::RunStats(const std::vector<GameStats> &games) {
         totalEvalsPerGen.resize(numGens);
         cachedEvalsPerGen.resize(numGens);
         for (const auto &game : games) {
-            score += game.score * 1. / numGames;
-            boardTotal += game.boardTotal * 1. / numGames;
-            timeTaken += game.timeTaken * 1. / numGames;
-            moves += game.moves * 1. / numGames;
-            cachedEvals += game.cachedEvals * 1. / numGames;
-            leafEvals += game.leafEvals * 1. / numGames;
-            totalEvals += game.totalEvals * 1. / numGames;
+            d["score"] += game.score * 1. / numGames;
+            d["boardTotal"] += game.boardTotal * 1. / numGames;
+            d["timeTaken"] += game.timeTaken * 1. / numGames;
+            d["moves"] += game.moves * 1. / numGames;
+            d["cachedEvals"] += game.cachedEvals * 1. / numGames;
+            d["leafEvals"] += game.leafEvals * 1. / numGames;
+            d["totalEvals"] += game.totalEvals * 1. / numGames;
             for (int i = 0; i < cachedEvalsPerGen.size(); ++i) {
                 cacheHitsPerGen[i] += game.cacheHitsPerGen[i] * 1. / numGames;
                 cacheMissesPerGen[i] += game.cacheMissesPerGen[i] * 1. / numGames;

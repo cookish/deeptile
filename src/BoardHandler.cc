@@ -12,6 +12,7 @@
 
 using std::cout;
 using std::endl;
+using std::setw;
 
 
 /*
@@ -60,7 +61,7 @@ Board BoardHandler::rotateLeft(const Board board) const {
         | (board & 0xF0000000000000) >> 8  // 13 -> 11
         | (board & 0xF00000000000000) >> 28  // 14 -> 7
         | (board & 0xF000000000000000) >> 48  // 15 -> 3
-        ;
+    ;
     return newBoard;
 }
 
@@ -82,7 +83,7 @@ Board BoardHandler::flip(const Board board) const {
         | (board & 0xF0000000000000) >> 24  // 13 -> 7
         | (board & 0xF00000000000000) >> 12  // 14 -> 11
         | (board & 0xF000000000000000)         // 15
-        ;
+    ;
     return newBoard;
 }
 
@@ -91,7 +92,7 @@ Board BoardHandler::moveLeft(const Board board) const {
         | rowHandler->moveLeft((board & 0xFFFF0000) >> 16) << 16
         | rowHandler->moveLeft((board & 0xFFFF00000000) >> 32) << 32
         | rowHandler->moveLeft((board & 0xFFFF000000000000) >> 48) << 48
-        ;
+    ;
     return newBoard;
 }
 
@@ -163,4 +164,16 @@ void BoardHandler::printHex(const Board board, int indent) const {
     cout << std::setfill('0') << std::setw(4) << std::hex << (board & 0xFFFF) << "\n\n";
     cout << std::dec;
 //    cout << "---------------" << endl;
+}
+
+void BoardHandler::printBoard(Board board) const {
+    std::cout << std::left;
+    for (int i=0; i<16; ++i) {
+        auto tile = (board & (0xFull << (4*i))) >> (4*i);
+        cout << setw(5);
+        if (tile == 0) cout << ".";
+        else cout << (1 << tile);
+        if (i % 4 == 3) cout << "\n";
+    }
+    cout << endl;
 }

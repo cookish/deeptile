@@ -69,10 +69,10 @@ int main() {
     }
     auto overallTotal = 0.;
     for (const auto &result : results) {
-        bh->printHex(result.finalBoard);
         auto total = bh->getBoardTotal(result.finalBoard);
         overallTotal += total;
         cout << "Total: " << total << endl;
+        bh->printBoard(result.finalBoard);
     }
     cout << "Average total: " << overallTotal / numGames << endl;
 

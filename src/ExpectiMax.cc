@@ -13,6 +13,7 @@ double ExpectiMax::getBestMoveRecurse(Board board, int &move, int gens, int &num
 
     if (gens == 0) {
         numEvals = 1;
+        ++gameStats.leafEvals;
         return scorer->getScore(board);
     }
 
@@ -59,12 +60,15 @@ double ExpectiMax::getAverageSpawnRecurse(Board board, int gens, int &numEvals, 
             if (cacheVal.score >= 0) {
                 score += cacheVal.score * prob;
                 numEvals += cacheVal.numEvals;
+                gameStats.cachedEvals += cacheVal.numEvals;
+                ++gameStats.cacheHits;
             } else {
                 int tmpEvals = 0;
                 auto calcScore = getBestMoveRecurse(spawnedBoard, tempMove, newGens, tmpEvals, indent + 2);
                 numEvals += tmpEvals;
                 score += calcScore * prob;
                 cache->insertScoreSafe(pBoard, newGens, calcScore, tmpEvals);
+                ++gameStats.cacheMisses;
             }
         }
     }

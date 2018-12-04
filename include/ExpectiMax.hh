@@ -13,6 +13,14 @@
 using std::unique_ptr;
 using std::shared_ptr;
 
+struct GameStats {
+    int leafEvals = 0;
+    int cachedEvals = 0;
+    int cacheHits = 0;
+    int cacheMisses = 0;
+};
+
+
 class ExpectiMax
 {
 public:
@@ -28,6 +36,7 @@ public:
     double getBestMoveRecurse(Board board, int &move, int gens, int &numEvals, int indent = 0);
     double getAverageSpawnRecurse(Board board, int gens, int &numEvals, int indent = 0);
     double scoreForDeath = 0;
+    GameStats gameStats;
 
 private:
     shared_ptr<BoardHandler> bh;

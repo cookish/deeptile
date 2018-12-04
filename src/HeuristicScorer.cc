@@ -8,6 +8,7 @@
 #include <vector>
 #include <algorithm>
 #include <iostream>
+#include <math.h>
 
 using std::cout;
 using std::endl;
@@ -27,25 +28,27 @@ double HeuristicScorer::getScore(Board board) {
     return score;
 }
 
-int HeuristicScorer::sumZigZag(Board board) const {
+double HeuristicScorer::sumZigZag(Board board) const {
     auto pBoard = bh->getPrincipalBoard(board);
 //    bh->printHex(pBoard);
-    int score = 0;
+    double score = 0;
     auto prevValue = 0xFFFFull;
     for (const auto & pos : {15, 14, 13, 12, 8, 9, 10, 11, 7, 6, 5, 4, 0, 1, 2, 3}) {
         auto val = (pBoard & (0xFull << (4 * pos))) >> (4 * pos);
         if (val > prevValue || val == 0) {
             break;
         }
-        score += (1 << val);
+//        score += (1 << val);
+//        score += val;
+        score += powf(2.3, val);
         prevValue = val;
     }
     return score;
 }
 
-int HeuristicScorer::sumAlongLongestMonotonicPath(Board board) const {
+double HeuristicScorer::sumAlongLongestMonotonicPath(Board board) const {
     auto max = findMaxValue(board);
-    auto max_score = 0;
+    auto max_score = 0.;
     for (int i = 0; i < 16; i++) {
         if (BoardHandler::getTileValue(board, i) == max) {
             max_score = std::max(max_score, sumAlongLongestMonotonicPathRecurse(board, i, max, 0));
@@ -54,16 +57,16 @@ int HeuristicScorer::sumAlongLongestMonotonicPath(Board board) const {
     return max_score;
 }
 
-int HeuristicScorer::sumAlongLongestMonotonicCornerPath(Board board) const {
+double HeuristicScorer::sumAlongLongestMonotonicCornerPath(Board board) const {
     auto pBoard = bh->getPrincipalBoard(board);
     auto score = sumAlongLongestMonotonicPathRecurse(pBoard, 15, 0xFFFF, 0);
     return score;
 }
 
-int HeuristicScorer::sumAlongLongestMonotonicPathRecurse(const Board board,
-                                                         const int currentPos,
-                                                         const int parentVal,
-                                                         int indent) const
+double HeuristicScorer::sumAlongLongestMonotonicPathRecurse(const Board board,
+                                                            const int currentPos,
+                                                            const int parentVal,
+                                                            int indent) const
 {
     bool print = false;
     if (print) for (int i =0; i < indent; i++) cout << " ";
@@ -74,8 +77,8 @@ int HeuristicScorer::sumAlongLongestMonotonicPathRecurse(const Board board,
         if (print)  cout << "Pos " << currentPos << " is a dead end" << endl;
         return 0;
     }
-    int max = 0;
-    int val;
+    double max = 0;
+    double val;
     for (const auto &pos : getNeighbours(currentPos)) {
         // set the current tile to zero, so that the algorithm does not come back here
         // ull means unsigned long long
@@ -87,7 +90,9 @@ int HeuristicScorer::sumAlongLongestMonotonicPathRecurse(const Board board,
     }
     if (print) for (int i =0; i < indent; i++) cout << " ";
     if (print) cout << "Pos " << currentPos << " returning " << max + BoardHandler::getExpFromValue(currentVal) << endl;
-    return max + BoardHandler::getExpFromValue(currentVal);
+//    return max + BoardHandler::getExpFromValue(currentVal);
+    return max + powf(2.3, currentVal);
+//    return max + currentVal;
 }
 
 int HeuristicScorer::findMaxValue(Board board) const {

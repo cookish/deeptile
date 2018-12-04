@@ -18,10 +18,10 @@ public:
 
 private:
     int findMaxValue(Board board) const;
-    int sumZigZag(Board board) const;
-    int sumAlongLongestMonotonicPath(Board board) const;
-    int sumAlongLongestMonotonicCornerPath(Board board) const;
-    int sumAlongLongestMonotonicPathRecurse(Board board, int currentPos, int parentVal, int indent) const;
+    double sumZigZag(Board board) const;
+    double sumAlongLongestMonotonicPath(Board board) const;
+    double sumAlongLongestMonotonicCornerPath(Board board) const;
+    double sumAlongLongestMonotonicPathRecurse(Board board, int currentPos, int parentVal, int indent) const;
     vector<int> getNeighbours(int pos) const;
     std::shared_ptr<BoardHandler> bh;
 };

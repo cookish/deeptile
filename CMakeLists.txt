@@ -13,6 +13,7 @@ set(SOURCES
         src/Utility.cc
         src/ScoreCache.cc
         src/GameStats.cc
+        src/RunStats.cc
         )
 
 add_library(mltwo_lib ${SOURCES})

@@ -17,6 +17,7 @@ using std::endl;
 using std::string;
 
 #include <chrono>
+#include <RunStats.hh>
 using std::chrono::steady_clock;
 
 using std::make_unique;
@@ -74,6 +75,7 @@ int main() {
         bh->printBoard(result.finalBoard);
     }
     cout << "Average total: " << overallTotal / numGames << endl;
+    RunStats runStats(results);
 
     return 0;
 }
@@ -139,8 +141,8 @@ runGame(Board startBoard,
         board |= (utility->coinToss(0.9) ? (1ull << (4 * place)) : (2ull << (4 * place)));
 //        bh->printHex(board);
     //    if (i % 500 == 0) {
-            cout << name << " >> " << " move: " << i << ", score: " << score
-                 << ", numEvals: " << numEvals << endl;
+//            cout << name << " >> " << " move: " << i << ", score: " << score
+//                 << ", numEvals: " << numEvals << endl;
      //   }
     }
     auto timeTaken = std::chrono::duration_cast<std::chrono::duration<double> >(steady_clock::now() - start).count();

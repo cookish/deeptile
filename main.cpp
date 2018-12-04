@@ -27,13 +27,13 @@ Board initBoard(Utility* utility);
 string getMoveName(int move);
 GameResult
 runGame(Board startBoard,
-        int genLimit,
+        int gens,
         const shared_ptr<Utility> &utility,
         const shared_ptr<BoardHandler> &bh,
         string name);
 void runThread(vector<Board> &boards, std::mutex &boardMutex,
                vector<GameResult> &results, std::mutex &resultMutex,
-               int genLimit,
+               int gens,
                const std::shared_ptr<Utility> &utility,
                const std::shared_ptr<BoardHandler> &bh,
                string name);
@@ -48,7 +48,7 @@ int main() {
     std::mutex boardMutex;
     std::mutex resultMutex;
 
-    int genLimit = 2;
+    int generations = 1;
     std::vector<std::thread> threads;
     std::vector<Board> boards;
     std::vector<GameResult> results;
@@ -62,7 +62,7 @@ int main() {
         string name = "Thread " + std::to_string(i);
         threads.emplace_back(runThread, std::ref(boards), std::ref(boardMutex),
                              std::ref(results), std::ref(resultMutex),
-                             genLimit, std::ref(utility), std::ref(bh), name);
+                             generations, std::ref(utility), std::ref(bh), name);
     }
     for (auto &thread : threads) {
         thread.join();
@@ -81,7 +81,7 @@ int main() {
 
 void runThread(vector<Board> &boards, std::mutex &boardMutex,
                vector<GameResult> &results, std::mutex &resultMutex,
-               int genLimit,
+               int gens,
                const std::shared_ptr<Utility> &utility,
                const std::shared_ptr<BoardHandler> &bh,
                string name)
@@ -97,7 +97,7 @@ void runThread(vector<Board> &boards, std::mutex &boardMutex,
             boards.pop_back();
         }
 //        cout << name << " starting on board " << std::hex << board << std::dec << endl;
-        auto result = runGame(board, genLimit, utility, bh, name);
+        auto result = runGame(board, gens, utility, bh, name);
         {
             std::lock_guard<std::mutex> lock(resultMutex);
             results.emplace_back(result);
@@ -109,21 +109,20 @@ void runThread(vector<Board> &boards, std::mutex &boardMutex,
 
 GameResult
 runGame(Board startBoard,
-        int genLimit,
+        int gens,
         const shared_ptr<Utility> &utility,
         const shared_ptr<BoardHandler> &bh,
         string name) {
     auto board = startBoard;
     ExpectiMax em(bh, utility, make_unique<HeuristicScorer>(bh), make_unique<ScoreCache>(bh));
     em.scoreForDeath = 0;
-    em.genLimit = genLimit;
     int move = 0;
     int evalCount = 0;
     double score = 0;
     int i;
     for (i = 0; true; ++i) {
         int numEvals = 0;
-        em.getBestMoveRecurse(board, move, 0, numEvals, evalCount);
+        em.getBestMoveRecurse(board, move, gens, numEvals, evalCount);
         if (move < 0) break;
 //        cout << "Moving " << getMoveName(move) << endl;
         score += bh->moveAndScore(board, move);

@@ -7,10 +7,10 @@
 CacheVal ScoreCache::get(Board pBoard, int gen) const {
 //    return -1;
     auto f = cache.find(pBoard);
-    if (f == cache.end()) {
+    if (f == cache.end()) { // no cache value
         return {-2., -2, -2};
     }
-    if (f->second.gen > gen) {
+    if (f->second.gen < gen) { // cached value was evaluated at fewer generations
         return {-1., -1, -1};
     }
 //    auto score = f->second.score;

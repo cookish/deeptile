@@ -5,6 +5,7 @@
 #include "HeuristicScorer.hh"
 #include "ScoreCache.hh"
 
+#include <thread>
 #include <iomanip>
 #include <iostream>
 using std::cout;
@@ -16,33 +17,109 @@ using std::string;
 using std::make_unique;
 using std::make_shared;
 
+struct GameResult {
+    Board startBoard;
+    Board finalBoard;
+    double score;
+};
+
 Board initBoard(Utility* utility);
 string getMoveName(int move);
-double runGame(Board &board, int genLimit, std::shared_ptr<Utility> utility, std::shared_ptr<BoardHandler> bh);
+GameResult
+runGame(Board startBoard,
+        int genLimit,
+        const shared_ptr<Utility> &utility,
+        const shared_ptr<BoardHandler> &bh,
+        string name);
+void runThread(vector<Board> &boards, std::mutex &boardMutex,
+               vector<GameResult> &results, std::mutex &resultMutex,
+               int genLimit,
+               const std::shared_ptr<Utility> &utility,
+               const std::shared_ptr<BoardHandler> &bh,
+               string name);
 
 int main() {
+    size_t numGames = 20 ;
+    size_t numThreads = 1;
+
     auto bh = make_shared<BoardHandler>(make_unique<RowHandler>());
     auto utility = make_shared<Utility>();
 
-    int genLimit = 3;
-    auto board = initBoard(utility.get());
-//    Board board = 0x0001012111210013;
-//    bh->printHex(board);
-    auto score = runGame(board, genLimit, utility, bh);
-    cout << "Final score: " << score << endl;
-    bh->printHex(board);
-    auto x = 1;
+    std::mutex boardMutex;
+    std::mutex resultMutex;
+
+    int genLimit = 2;
+    std::vector<std::thread> threads;
+    std::vector<Board> boards;
+    std::vector<GameResult> results;
+    threads.reserve(numGames);
+    boards.reserve(numGames);
+    results.reserve(numGames);
+    for (int i = 0; i < numGames; ++i) {
+        boards.emplace_back(initBoard(utility.get()));
+    }
+    for (int i = 0; i < numThreads; ++i) {
+        string name = "Thread " + std::to_string(i);
+        threads.emplace_back(runThread, std::ref(boards), std::ref(boardMutex),
+                             std::ref(results), std::ref(resultMutex),
+                             genLimit, std::ref(utility), std::ref(bh), name);
+    }
+    for (auto &thread : threads) {
+        thread.join();
+    }
+    auto totalScore = 0.;
+    for (const auto &result : results) {
+        totalScore += result.score;
+        cout << "Score: " << result.score << endl;
+        bh->printHex(result.finalBoard);
+    }
+    cout << "Average score: " << totalScore / numGames << endl;
+
     return 0;
 }
 
-double runGame(Board &board, int genLimit, std::shared_ptr<Utility> utility, std::shared_ptr<BoardHandler> bh) {
+void runThread(vector<Board> &boards, std::mutex &boardMutex,
+               vector<GameResult> &results, std::mutex &resultMutex,
+               int genLimit,
+               const std::shared_ptr<Utility> &utility,
+               const std::shared_ptr<BoardHandler> &bh,
+               string name)
+{
+    while (true) {
+        Board board;
+        {
+            std::lock_guard<std::mutex> lock(boardMutex);
+            if (boards.empty()) {
+                return;
+            }
+            board = boards.back();
+            boards.pop_back();
+        }
+//        cout << name << " starting on board " << std::hex << board << std::dec << endl;
+        auto result = runGame(board, genLimit, utility, bh, name);
+        {
+            std::lock_guard<std::mutex> lock(resultMutex);
+            results.emplace_back(result);
+            cout << name << " completed game " << results.size() << ", score: " << result.score << endl;
+        }
+    }
+}
+
+GameResult
+runGame(Board startBoard,
+        int genLimit,
+        const shared_ptr<Utility> &utility,
+        const shared_ptr<BoardHandler> &bh,
+        string name) {
+    auto board = startBoard;
     ExpectiMax em(bh, utility, make_unique<HeuristicScorer>(bh), make_unique<ScoreCache>(bh));
     em.scoreForDeath = 0;
     em.genLimit = genLimit;
     int move = 0;
     int evalCount = 0;
     double score = 0;
-    while (true) {
+    int i;
+    for (i = 0; true; ++i) {
         em.getBestMoveRecurse(board, move, 0, evalCount);
         if (move < 0) break;
 //        cout << "Moving " << getMoveName(move) << endl;
@@ -55,9 +132,12 @@ double runGame(Board &board, int genLimit, std::shared_ptr<Utility> utility, std
 //        cout << "Putting tile in place " << place << endl;
         board |= (utility->coinToss(0.9) ? (1ull << (4 * place)) : (2ull << (4 * place)));
 //        bh->printHex(board);
-        cout << "Score: " << score << endl;
+    //    if (i % 500 == 0) {
+            cout << name << " >> " << " move: " << i << ", score: " << score << endl;
+     //   }
     }
-    return score;
+    cout << name << " >> " << " move: " << i << ", score: " << score << endl;
+    return {startBoard, board, score};
 }
 
 
@@ -83,13 +163,9 @@ Board initBoard(Utility* utility) {
 string getMoveName(int move) {
     switch(move) {
         case 0: return "left";
-            break;
         case 1: return "up";
-            break;
         case 2: return "right";
-            break;
         case 3: return "down";
-            break;
         default:
             return "error";
     }

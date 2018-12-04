@@ -42,6 +42,7 @@ Board BoardHandler::getPrincipalBoard(Board board) const {
 }
 
 // rotate 90 degrees counterclockwise
+// TODO: add ull for unsigned long long
 Board BoardHandler::rotateLeft(const Board board) const {
     Board newBoard = (board & 0xF) << 48  // 0 -> 12
         | (board & 0xF0) << 28  // 1 -> 8

@@ -4,8 +4,11 @@
 
 #include "Utility.hh"
 
-Utility::Utility() {
-    rng = std::mt19937(rd());
+// see https://codereview.stackexchange.com/questions/109260/seed-stdmt19937-from-stdrandom-device
+Utility::Utility()
+  : rng(std::random_device{}())
+{
+    rng.discard(700000);
 }
 
 int Utility::randInt(int max) {

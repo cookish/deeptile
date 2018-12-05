@@ -19,6 +19,7 @@ public:
     int cachedEvals = 0;
     int leafEvals = 0;
     int totalEvals = 0;
+    bool passedCriticalPoint = false;
     vector<int> cacheHitsPerGen;
     vector<int> cacheMissesPerGen;
     vector<int> totalEvalsPerGen;

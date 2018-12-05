@@ -80,6 +80,7 @@ int main() {
     std::cout << js.dump(4) << std::endl;
     runStats.printRateInfo();
     runStats.printCacheInfo();
+    cout << "Passing critical point: " << runStats.d["passedCriticalPoint"] << endl;
     return 0;
 }
 
@@ -117,11 +118,11 @@ runGame(Board startBoard,
         const shared_ptr<Utility> &utility,
         const shared_ptr<BoardHandler> &bh,
         string name) {
+    bool passedCritialPoint = false;
     auto board = startBoard;
     ExpectiMax em(bh, utility, make_unique<HeuristicScorer>(bh), make_unique<ScoreCache>(bh), make_unique<GameStats>());
     em.scoreForDeath = 0;
     int move = 0;
-    int evalCount = 0;
     double score = 0;
     int i;
 
@@ -148,6 +149,11 @@ runGame(Board startBoard,
 //            cout << name << " >> " << " move: " << i << ", score: " << score
 //                 << ", numEvals: " << numEvals << endl;
 //        }
+        // used to see if board crosses critical point
+        if (bh->getHighestTile(board) == 14) {
+            passedCritialPoint = true;
+            break;
+        }
     }
     auto timeTaken = (std::clock() - start) / (double)CLOCKS_PER_SEC;
 //    cout << name << " >> " << " move: " << i << ", score: " << score << endl;
@@ -159,17 +165,19 @@ runGame(Board startBoard,
     stats->moves = i;
     stats->timeTaken = timeTaken;
     stats->totalEvals = totalEvals;
+    stats->passedCriticalPoint = passedCritialPoint;
     return stats;
 }
 
 
 Board initBoard(Utility* utility) {
-    auto board = Board{0};
-    auto pos1 = utility->randInt(16);
+    auto board = Board{0xDCBA0009ull << (4 * 8)};
+
+    auto pos1 = utility->randInt(12);
     int pos2 = pos1;
 
     while (pos2 == pos1) {
-        pos2 = utility->randInt(16);
+        pos2 = utility->randInt(12);
     }
     for (const auto& p : {pos1, pos2}) {
         if (utility->coinToss(0.9)) {

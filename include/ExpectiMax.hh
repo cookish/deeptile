@@ -28,8 +28,8 @@ public:
           cache(std::move(cache)),
           stats(std::move(stats))
     {;}
-    double getBestMoveRecurse(Board board, int &move, int gens, int &numEvals, int indent = 0);
-    double getAverageSpawnRecurse(Board board, int gens, int &numEvals, int indent = 0);
+    double getBestMoveRecurse(Board board, int &move, int gens, int &numEvals, double prob, int indent = 0);
+    double getAverageSpawnRecurse(Board board, int gens, int &numEvals, double prob, int indent = 0);
     double scoreForDeath = 0;
     unique_ptr<GameStats> getFinalStats() { return std::move(stats); }
     void pruneCache(Board board);

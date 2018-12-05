@@ -8,7 +8,13 @@
 using std::cout;
 using std::endl;
 
-double ExpectiMax::getBestMoveRecurse(Board board, int &move, int gens, int &numEvals, int indent) {
+double ExpectiMax::getBestMoveRecurse(const Board board,
+                                      int &move,
+                                      const int gens,
+                                      int &numEvals,
+                                      const double prob,
+                                      const int indent)
+{
     move = -1;
 
     if (gens == 0) {
@@ -40,7 +46,12 @@ double ExpectiMax::getBestMoveRecurse(Board board, int &move, int gens, int &num
 }
 
 
-double ExpectiMax::getAverageSpawnRecurse(Board board, int gens, int &numEvals, int indent) {
+double ExpectiMax::getAverageSpawnRecurse(const Board board,
+                                          const int gens,
+                                          int &numEvals,
+                                          const double prob,
+                                          int indent)
+{
 //    for (int i = 0; i < indent; i++) cout << " ";
 //    cout << "getAverageSpawnRecurse: evaluating board:" << endl;
 //    bh->printHex(board, indent);

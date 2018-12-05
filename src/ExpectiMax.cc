@@ -16,6 +16,7 @@ double ExpectiMax::getBestMoveRecurse(const Board board,
                                       const int indent)
 {
     move = -1;
+    auto moveOptions = getPrunedMoves(board, prob);
 
     if (gens == 0) {
         numEvals = 1;
@@ -27,16 +28,14 @@ double ExpectiMax::getBestMoveRecurse(const Board board,
 //    cout << "getBestMoveRecurse: evaluating board:" << endl;
 //    bh->printHex(board, indent);
 
-
     double score;
     double bestScore = scoreForDeath;
-    auto possibleMoves = bh->getPossibleMoves(board);
-    for (const auto &currentMove : possibleMoves) {
+    for (const auto &moveOption : moveOptions) {
         int tmpEvals = 0;
-        score = getAverageSpawnRecurse(currentMove.board, gens, tmpEvals, indent + 2);
+        score = getAverageSpawnRecurse(moveOption.board, gens, tmpEvals, prob * moveOption.prob, indent + 2);
         numEvals += tmpEvals;
         if (score > bestScore) {
-            move = currentMove.move;
+            move = moveOption.move;
             bestScore = score;
         }
     }
@@ -68,7 +67,6 @@ double ExpectiMax::getAverageSpawnRecurse(const Board board,
     for (const auto &spawn : spawns) {
         spawnedBoard = board | (static_cast<Board>(spawn.tile) << (4 * spawn.pos));
         auto pBoard = bh->getPrincipalBoard(spawnedBoard);
-//            auto newGens = gens - static_cast<int>(tile);
         auto cacheVal = cache->get(pBoard, newGens);
         ++numNodes;
         if (cacheVal.score >= 0) {  // found a cached result
@@ -115,5 +113,17 @@ vector<ExpectiMax::TilePosProb> ExpectiMax::getPrunedSpawns(const Board board, c
     }
     return ret;
 }
+vector<ExpectiMax::BoardMoveProb> ExpectiMax::getPrunedMoves(Board board, double prob) const {
+    auto possibleMoves = bh->getPossibleMoves(board);
+    vector<BoardMoveProb> ret;
+    if (possibleMoves.empty()) {
+        return ret;
+    }
+    ret.reserve(possibleMoves.size());
+
+    for (const auto &move : possibleMoves) {
+        ret.emplace_back(move.board, move.move, 1./possibleMoves.size());
+    }
+
     return ret;
 }

@@ -131,7 +131,7 @@ runGame(Board startBoard,
     for (i = 0; true; ++i) {
         int numEvals = 0;
 
-        em.getBestMoveRecurse(board, move, gens, numEvals, evalCount);
+        em.getBestMoveRecurse(board, move, gens, numEvals, 0);
         em.pruneCache(board);
         totalEvals += numEvals;
         if (move < 0) break;

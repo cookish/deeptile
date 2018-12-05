@@ -152,6 +152,17 @@ int BoardHandler::getBoardTotal(Board board) const {
 }
 
 void BoardHandler::printHex(const Board board, int indent) const {
+int BoardHandler::getHighestTile(const Board board) const {
+    int tile;
+    int max = 0;
+    for (int i = 0; i < 16; i++) {
+        tile = getTileValue(board, i);
+        if (tile > max) {
+            max = tile;
+        }
+    }
+    return max;
+}
     for (int i = 0; i < indent; i++) cout << " ";
     cout << std::setfill('0') << std::setw(4) << std::hex << (board >> 12*4) << "\n";
     for (int i = 0; i < indent; i++) cout << " ";

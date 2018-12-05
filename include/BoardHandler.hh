@@ -32,6 +32,7 @@ public:
     vector<int> getPossibleSpawns(Board board) const;
     vector<BoardAndMove> getPossibleMoves(Board board) const;
     int getBoardTotal(Board board) const;
+    int getHighestTile(Board board) const;
     void printBoard(Board board) const;
 
     static inline int getTileValue(const Board board, const int pos) {

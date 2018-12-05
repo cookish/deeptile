@@ -111,10 +111,25 @@ vector<ExpectiMax::TilePosProb> ExpectiMax::getPrunedSpawns(const Board board, c
         return {};
     }
     vector<TilePosProb> ret;
-    for (const auto &pos : possibleSpawns) {
-        ret.emplace_back(1, pos, 0.9 / possibleSpawns.size());
-        ret.emplace_back(2, pos, 0.1 / possibleSpawns.size());
+
+    if (prob >= 1./100.) {
+        for (const auto &pos : possibleSpawns) {
+            ret.emplace_back(1, pos, 0.9 / possibleSpawns.size());
+            ret.emplace_back(2, pos, 0.1 / possibleSpawns.size());
+        }
+    } else if (prob >= 1./4000.) {
+        for (const auto &pos : possibleSpawns) {
+            ret.emplace_back(1, pos, 0.9 / possibleSpawns.size());
+        }
+        auto randPos = utility->randInt(possibleSpawns.size());
+        ret.emplace_back(2, possibleSpawns[randPos], 0.1);
+    } else {
+        auto randPos = utility->randInt(possibleSpawns.size());
+        ret.emplace_back(1, possibleSpawns[randPos], 0.9);
+        randPos = utility->randInt(possibleSpawns.size());
+        ret.emplace_back(2, possibleSpawns[randPos], 0.1);
     }
+
     return ret;
 }
 
@@ -128,8 +143,50 @@ vector<ExpectiMax::BoardMoveProb> ExpectiMax::getPrunedMoves(const double prob,
     ret.reserve(possibleMoves.size());
 
     for (const auto &move : possibleMoves) {
-        ret.emplace_back(move.board, move.move, 1./possibleMoves.size());
+        auto score = scorer->getScore(move.board);
+        ret.emplace_back(move.board, move.move, score);
     }
+
+    // TODO: prob is not equal to heuristic score...
+    //  should get more nuanced relation by looking at score vs. which move is chosen
+    int optionLimit;
+    double probThresh;
+    if (prob >= 1./100.) {
+        optionLimit = 4;
+        probThresh = 0.;
+    } else if (prob >= 1./4000) {
+        optionLimit = 3;
+        probThresh = 0.25;
+    } else {
+        optionLimit = 2;
+        probThresh = 0.4;
+    }
+
+    // sort
+    std::sort(ret.begin(), ret.end(), []( const auto& lhs, const auto& rhs )
+    {
+        return lhs.prob > rhs.prob;
+    });
+
+    vector<BoardMoveProb> copyret;
+    for (auto &r : ret) copyret.push_back(r);
+
+    // prune out extras
+    for (int i=0; i < static_cast<int>(possibleMoves.size()) - optionLimit; ++i) {
+        ret.pop_back();
+    }
+
+    // filter out probs that are too low
+    auto totalScore = 0.;
+    for (const auto &b : ret) totalScore += b.prob;
+    while (ret.back().prob / totalScore < probThresh) {
+        ret.pop_back();
+    }
+
+    // normalise
+    totalScore = 0;
+    for (const auto &b : ret) totalScore += b.prob;
+    for (auto &b : ret) b.prob /= totalScore;
 
     return ret;
 }

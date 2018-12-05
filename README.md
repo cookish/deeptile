@@ -5,6 +5,8 @@ This is a fun project, inspired by Alpha-Go, to create a 2048 AI that plays agai
 
 I love the concept of emerging intelligence, without providing human wisdom.
 
+There are more detailed notes in the [wiki](https://github.com/cookish/deeptile/wiki).
+
 ## Rough Roadmap
 
 1. Get decent performance without the AI, using a set algorithm to evaluate board positions.

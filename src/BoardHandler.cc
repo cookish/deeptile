@@ -131,7 +131,7 @@ vector<BoardAndMove> BoardHandler::getPossibleMoves(Board board) const {
     return v;
 }
 
-vector<int> BoardHandler::getPossibleSpawns(Board board) const {
+vector<int> BoardHandler::getPossibleSpawns(const Board board) const {
     std::vector<int> v;
     Board mask = 0xFull;
     for (int i = 0; i < 16; ++i) {
@@ -143,7 +143,7 @@ vector<int> BoardHandler::getPossibleSpawns(Board board) const {
     return v;
 }
 
-int BoardHandler::getBoardTotal(Board board) const {
+int BoardHandler::getBoardTotal(const Board board) const {
     auto score = rowHandler->getTotal(board & 0xFFFF)
         + rowHandler->getTotal((board >> 16) & 0xFFFF)
         + rowHandler->getTotal((board >> 32) & 0xFFFF)
@@ -151,7 +151,6 @@ int BoardHandler::getBoardTotal(Board board) const {
     return score;
 }
 
-void BoardHandler::printHex(const Board board, int indent) const {
 int BoardHandler::getHighestTile(const Board board) const {
     int tile;
     int max = 0;
@@ -163,6 +162,8 @@ int BoardHandler::getHighestTile(const Board board) const {
     }
     return max;
 }
+
+void BoardHandler::printHex(const Board board, const int indent) const {
     for (int i = 0; i < indent; i++) cout << " ";
     cout << std::setfill('0') << std::setw(4) << std::hex << (board >> 12*4) << "\n";
     for (int i = 0; i < indent; i++) cout << " ";
@@ -175,10 +176,10 @@ int BoardHandler::getHighestTile(const Board board) const {
 //    cout << "---------------" << endl;
 }
 
-void BoardHandler::printBoard(Board board) const {
+void BoardHandler::printBoard(const Board board) const {
     std::cout << std::left;
     for (int i=0; i<16; ++i) {
-        auto tile = (board & (0xFull << (4*i))) >> (4*i);
+        auto tile = getTileValue(board, 15 - i);
         cout << setw(5);
         if (tile == 0) cout << ".";
         else cout << (1 << tile);

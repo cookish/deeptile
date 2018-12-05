@@ -16,18 +16,22 @@ double ExpectiMax::getBestMoveRecurse(const Board board,
                                       const int indent)
 {
     move = -1;
-    auto moveOptions = getPrunedMoves(board, prob);
+    numEvals = 0;
+
+    auto possibleMoves = bh->getPossibleMoves(board);
+    if (possibleMoves.empty()) {
+        return scoreForDeath;
+    }
 
     if (gens == 0) {
         numEvals = 1;
         ++stats->leafEvals;
         return scorer->getScore(board);
     }
-
-//    for (int i = 0; i < indent; i++) cout << " ";
-//    cout << "getBestMoveRecurse: evaluating board:" << endl;
-//    bh->printHex(board, indent);
-
+    //    for (int i = 0; i < indent; i++) cout << " ";
+    //    cout << "getBestMoveRecurse: evaluating board:" << endl;
+    //    bh->printHex(board, indent);
+    auto moveOptions = getPrunedMoves(prob, possibleMoves);
     double score;
     double bestScore = scoreForDeath;
     for (const auto &moveOption : moveOptions) {
@@ -113,8 +117,10 @@ vector<ExpectiMax::TilePosProb> ExpectiMax::getPrunedSpawns(const Board board, c
     }
     return ret;
 }
-vector<ExpectiMax::BoardMoveProb> ExpectiMax::getPrunedMoves(Board board, double prob) const {
-    auto possibleMoves = bh->getPossibleMoves(board);
+
+vector<ExpectiMax::BoardMoveProb> ExpectiMax::getPrunedMoves(const double prob,
+                                                             const std::vector<BoardAndMove> &possibleMoves) const
+{
     vector<BoardMoveProb> ret;
     if (possibleMoves.empty()) {
         return ret;

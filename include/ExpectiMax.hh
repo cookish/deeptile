@@ -47,13 +47,14 @@ private:
         TilePosProb(int tile, int pos, double prob) : tile(tile), pos(pos), prob(prob) {;}
     };
     vector<TilePosProb> getPrunedSpawns(Board board, double prob) const;
+
     struct BoardMoveProb {
         Board board;
         int move;
         double prob;
         BoardMoveProb(Board board, int move, double prob) : board(board), move(move), prob(prob) {;}
     };
-    vector<BoardMoveProb> getPrunedMoves(Board board, double prob) const;
+    vector<BoardMoveProb> getPrunedMoves(double prob, const std::vector<BoardAndMove> &possibleMoves) const;
 };
 
 

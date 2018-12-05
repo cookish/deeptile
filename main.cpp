@@ -41,7 +41,7 @@ void runThread(vector<Board> &boards, std::mutex &boardMutex,
 int main() {
     size_t numGames = 50;
     size_t numThreads = 5;
-    int generations = 2;
+    int generations = 3;
 
     auto bh = make_shared<BoardHandler>(make_unique<RowHandler>());
     auto utility = make_shared<Utility>();
@@ -145,7 +145,7 @@ runGame(Board startBoard,
 //        cout << "Putting tile in place " << place << endl;
         board |= (utility->coinToss(0.9) ? (1ull << (4 * place)) : (2ull << (4 * place)));
 //        bh->printHex(board);
-//        if (i % 500 == 0) {
+//        if (i % 10 == 0) {
 //            cout << name << " >> " << " move: " << i << ", score: " << score
 //                 << ", numEvals: " << numEvals << endl;
 //        }

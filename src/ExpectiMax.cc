@@ -171,9 +171,6 @@ vector<ExpectiMax::BoardMoveProb> ExpectiMax::getPrunedMoves(const double prob,
         return lhs.prob > rhs.prob;
     });
 
-    vector<BoardMoveProb> copyret;
-    for (auto &r : ret) copyret.push_back(r);
-
     // prune out extras
     for (int i=0; i < static_cast<int>(possibleMoves.size()) - optionLimit; ++i) {
         ret.pop_back();

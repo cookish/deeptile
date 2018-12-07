@@ -131,18 +131,6 @@ vector<BoardAndMove> BoardHandler::getPossibleMoves(Board board) const {
     return v;
 }
 
-vector<int> BoardHandler::getPossibleSpawns(const Board board) const {
-    std::vector<int> v;
-    Board mask = 0xFull;
-    for (int i = 0; i < 16; ++i) {
-        if ((board & mask) == 0) {
-            v.push_back(i);
-        }
-        mask = mask << 4;
-    }
-    return v;
-}
-
 TileList BoardHandler::getPossibleSpawns(Board board) const {
     Board ret = 0;
     int numSpawns=0;

@@ -8,6 +8,7 @@
 #include "RunStats.hh"
 #include "JsonStats.hh"
 
+#include <mutex>
 #include <thread>
 #include <iomanip>
 #include <iostream>

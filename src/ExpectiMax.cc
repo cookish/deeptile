@@ -4,6 +4,7 @@
 
 #include "ExpectiMax.hh"
 
+#include <algorithm>
 #include <iostream>
 using std::cout;
 using std::endl;

@@ -7,6 +7,7 @@
 
 #include "RowHandler.hh"
 
+#include <memory>
 #include <cstdint>
 #include <vector>
 using std::vector;

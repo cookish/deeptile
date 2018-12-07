@@ -34,7 +34,7 @@ double HeuristicScorer::sumZigZag(Board board) const {
     double score = 0;
     auto prevValue = 0xFFFFull;
     for (const auto & pos : {15, 14, 13, 12, 8, 9, 10, 11, 7, 6, 5, 4, 0, 1, 2, 3}) {
-        auto val = (pBoard & (0xFull << (4 * pos))) >> (4 * pos);
+        auto val = bh->getTileValue(pBoard, pos);
         if (val > prevValue || val == 0) {
             break;
         }

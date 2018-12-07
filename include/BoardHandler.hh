@@ -37,7 +37,7 @@ public:
     void printBoard(Board board) const;
 
     static inline int getTileValue(const Board board, const int pos) {
-        return static_cast<int>((board & (0xFull << (pos * 4))) >> (pos * 4));
+        return static_cast<int>((board >> (pos * 4)) & 0xF);
     }
     static inline int getExpFromValue(const int value) {
         return (value == 0) ? 0 : (1 << value);

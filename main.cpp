@@ -43,9 +43,9 @@ void runThread(vector<Board> &boards, std::mutex &boardMutex,
                string name);
 
 int main() {
-    size_t numGames = 50;
+    size_t numGames = 20;
     size_t numThreads = 5;
-    int generations = 3;
+    int generations = 4;
 
     auto bh = make_shared<BoardHandler>(make_unique<RowHandler>());
     auto utility = make_shared<Utility>();
@@ -146,8 +146,8 @@ runGame(Board startBoard,
 //        bh->printHex(board);
         auto possibleTiles = bh->getPossibleSpawns(board);
 
-        auto placement = utility2->randInt(static_cast<int>(possibleTiles.size()));
-        auto place = possibleTiles[placement];
+        auto placement = utility2->randInt(static_cast<int>(possibleTiles & 0xFull));
+        auto place = bh->getSpawnFromList(possibleTiles, placement);
 //        cout << "Putting tile in place " << place << endl;
         board |= (utility2->coinToss(0.9) ? (1ull << (4 * place)) : (2ull << (4 * place)));
 //        bh->printHex(board);

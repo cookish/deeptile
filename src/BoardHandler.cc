@@ -143,6 +143,18 @@ vector<int> BoardHandler::getPossibleSpawns(const Board board) const {
     return v;
 }
 
+TileList BoardHandler::getPossibleSpawns(Board board) const {
+    Board ret = 0;
+    int numSpawns=0;
+    for (Board pos = 0; pos < 16; ++pos) {
+        if ((board & (0xFull << (pos*4))) == 0) {
+            ret += (pos << (++numSpawns * 4));
+        }
+    }
+    ret += numSpawns;
+    return ret;
+}
+
 int BoardHandler::getBoardTotal(const Board board) const {
     auto score = rowHandler->getTotal(board & 0xFFFF)
         + rowHandler->getTotal((board >> 16) & 0xFFFF)

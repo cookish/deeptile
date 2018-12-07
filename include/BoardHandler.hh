@@ -19,6 +19,7 @@ struct BoardAndMove {
 
 
 using Board = uint64_t;
+using TileList = uint64_t;
 
 class BoardHandler
 {
@@ -30,7 +31,10 @@ public:
     Board moveLeft(Board board) const;
     int moveAndScore(Board &board, int move) const;
     void printHex(Board board, int indent = 0) const;
-    vector<int> getPossibleSpawns(Board board) const;
+    inline int getSpawnFromList(const TileList tile, int index) const {
+        return static_cast<int>((tile >> (index*4 + 4)) & 0xF);
+    }
+    TileList getPossibleSpawns(Board board) const;
     vector<BoardAndMove> getPossibleMoves(Board board) const;
     int getBoardTotal(Board board) const;
     int getHighestTile(Board board) const;

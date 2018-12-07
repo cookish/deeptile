@@ -108,29 +108,31 @@ void ExpectiMax::pruneCache(Board board) {
 
 vector<ExpectiMax::TilePosProb> ExpectiMax::getPrunedSpawns(const Board board, const double prob) const {
     auto possibleSpawns = bh->getPossibleSpawns(board);
-    if (possibleSpawns.empty()) {
+    if (possibleSpawns == 0) {
         return {};
     }
     vector<TilePosProb> ret;
 
+    int numSpawns = static_cast<int>(possibleSpawns) & 0xF;
     if (prob >= 1./100.) {
-        for (const auto &pos : possibleSpawns) {
-            ret.emplace_back(1, pos, 0.9 / possibleSpawns.size());
-            ret.emplace_back(2, pos, 0.1 / possibleSpawns.size());
+        for (int i = 0; i < numSpawns; ++i) {
+            auto pos = bh->getSpawnFromList(possibleSpawns, i);
+            ret.emplace_back(1, pos, 0.9 / numSpawns);
+            ret.emplace_back(2, pos, 0.1 / numSpawns);
         }
     } else if (prob >= 1./4000.) {
-        for (const auto &pos : possibleSpawns) {
-            ret.emplace_back(1, pos, 0.9 / possibleSpawns.size());
+        for (int i = 0; i < numSpawns; ++i) {
+            ret.emplace_back(1, bh->getSpawnFromList(possibleSpawns, i), 0.9 / numSpawns);
         }
-        auto randPos = utility->randInt(possibleSpawns.size());
-        ret.emplace_back(2, possibleSpawns[randPos], 0.1);
-    } else {
-        auto randPos = utility->randInt(possibleSpawns.size());
-        ret.emplace_back(1, possibleSpawns[randPos], 0.9);
-        randPos = utility->randInt(possibleSpawns.size());
-        ret.emplace_back(2, possibleSpawns[randPos], 0.1);
-    }
+        auto randPos = utility->randInt(numSpawns);
+        ret.emplace_back(2, bh->getSpawnFromList(possibleSpawns, randPos), 0.1);
 
+    } else {
+        auto randPos = utility->randInt(numSpawns);
+        ret.emplace_back(1, bh->getSpawnFromList(possibleSpawns, randPos), 0.9);
+        randPos = utility->randInt(numSpawns);
+        ret.emplace_back(2, bh->getSpawnFromList(possibleSpawns, randPos), 0.1);
+    }
     return ret;
 }
 

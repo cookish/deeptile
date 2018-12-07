@@ -20,6 +20,9 @@ using std::string;
 #include <ctime>
 using std::clock;
 
+#include <chrono>
+using std::chrono::steady_clock;
+
 using std::make_unique;
 using std::make_shared;
 
@@ -126,7 +129,8 @@ runGame(Board startBoard,
     double score = 0;
     int i;
 
-    auto start = clock();
+    auto start = steady_clock::now();
+//    auto start = clock();
     int totalEvals = 0;
     for (i = 0; true; ++i) {
         int numEvals = 0;
@@ -155,7 +159,9 @@ runGame(Board startBoard,
             break;
         }
     }
-    auto timeTaken = (std::clock() - start) / (double)CLOCKS_PER_SEC;
+    auto timeTaken = std::chrono::duration_cast<std::chrono::duration<double> >
+         (steady_clock::now() - start).count();
+    //    auto timeTaken = (clock() - start) / (double) CLOCKS_PER_SEC;
 //    cout << name << " >> " << " move: " << i << ", score: " << score << endl;
     auto stats = em.getFinalStats();
     stats->finalBoard = board;

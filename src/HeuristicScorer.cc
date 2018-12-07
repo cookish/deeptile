@@ -61,7 +61,8 @@ double HeuristicScorer::sumZigZag(Board board) const {
         }
 //        score += (1 << val);
 //        score += val;
-        score += std::pow(base, val);
+        score += powf(2.3, val);
+//        score += std::pow(base, val);
         prevValue = val;
     }
     return score;
@@ -123,7 +124,8 @@ double HeuristicScorer::sumAlongLongestMonotonicPathRecurse(const Board board,
     }
     if (print) for (int i =0; i < indent; i++) cout << " ";
     if (print) cout << "Pos " << currentPos << " returning " << max + BoardHandler::getExpFromValue(currentVal) << endl;
-    return max + std::pow(base, currentVal);
+    return max + powf(2.3, currentVal);
+//    return max + std::pow(base, currentVal);
 }
 
 int HeuristicScorer::findMaxValue(Board board) const {

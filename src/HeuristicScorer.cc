@@ -137,3 +137,7 @@ int HeuristicScorer::findMaxValue(Board board) const {
     } while (board > 0);
     return static_cast<int>(max);
 }
+
+double HeuristicScorer::getScoreMovedFast(const Board board) {
+    return static_cast<double>(bh->getPrincipalBoard(board));
+}

@@ -9,15 +9,36 @@
 #include <algorithm>
 #include <iostream>
 #include <math.h>
+#include <cmath>
+
 
 using std::cout;
 using std::endl;
 
 using std::vector;
 
+HeuristicScorer::HeuristicScorer(std::shared_ptr<BoardHandler> bh)
+    : bh(std::move(bh))
+{
+    neighbourList[0] =  0x14;
+    neighbourList[1] =  0x250;
+    neighbourList[2] =  0x136;
+    neighbourList[3] =  0x27;
+    neighbourList[4] =  0x05;
+    neighbourList[5] =  0x1469;
+    neighbourList[6] =  0x257a;
+    neighbourList[7] =  0x36b;
+    neighbourList[8] =  0x49c;
+    neighbourList[9] =  0x58ad;
+    neighbourList[10] = 0x69be;
+    neighbourList[11] = 0x7af;
+    neighbourList[12] = 0x8d;
+    neighbourList[13] = 0x9ce;
+    neighbourList[14] = 0xadf;
+    neighbourList[15] = 0xbe;
+}
+
 double HeuristicScorer::getScore(Board board) {
-//    auto score = sumAlongLongestMonotonicPath(board);
-//    auto bh = BoardHandler(std::make_unique<RowHandler>());
 //    cout << "==> Scorer: Evaluating board" << endl;
 //    bh.printHex(board);
 
@@ -32,7 +53,7 @@ double HeuristicScorer::sumZigZag(Board board) const {
     auto pBoard = bh->getPrincipalBoard(board);
 //    bh->printHex(pBoard);
     double score = 0;
-    auto prevValue = 0xFFFFull;
+    auto prevValue = 0xFFFF;
     for (const auto & pos : {15, 14, 13, 12, 8, 9, 10, 11, 7, 6, 5, 4, 0, 1, 2, 3}) {
         auto val = bh->getTileValue(pBoard, pos);
         if (val > prevValue || val == 0) {
@@ -40,7 +61,7 @@ double HeuristicScorer::sumZigZag(Board board) const {
         }
 //        score += (1 << val);
 //        score += val;
-        score += powf(2.3, val);
+        score += std::pow(base, val);
         prevValue = val;
     }
     return score;
@@ -79,20 +100,30 @@ double HeuristicScorer::sumAlongLongestMonotonicPathRecurse(const Board board,
     }
     double max = 0;
     double val;
-    for (const auto &pos : getNeighbours(currentPos)) {
-        // set the current tile to zero, so that the algorithm does not come back here
-        // ull means unsigned long long
-        val = sumAlongLongestMonotonicPathRecurse(board & ~(0xFull << (currentPos * 4)), pos, currentVal, indent+3);
-        if (val > max) {
-            max = val;
-        }
+    auto n = neighbourList[currentPos];
+//    for (const auto &pos : getNeighbours(currentPos)) {
 
+    // set the current tile to zero, so that the algorithm does not come back here
+    Board newBoard = board & ~(0xFull << (currentPos*4));
+
+    val = sumAlongLongestMonotonicPathRecurse(newBoard, n & 0xF, currentVal, indent+3);
+    if (val > max) { max = val; }
+
+    val = sumAlongLongestMonotonicPathRecurse(newBoard, (n & 0xF0) >> 4, currentVal, indent+3);
+    if (val > max) { max = val; }
+
+    if ((n & 0xF00) != 0) {  // three neighbours
+        val = sumAlongLongestMonotonicPathRecurse(newBoard, (n & 0xF00) >> 8, currentVal, indent+3);
+        if (val > max) { max = val; }
+
+        if ((n & 0xF000) != 0) {  // four neighbours
+            val = sumAlongLongestMonotonicPathRecurse(newBoard, (n & 0xF000) >> 12, currentVal, indent+3);
+            if (val > max) { max = val; }
+        }
     }
     if (print) for (int i =0; i < indent; i++) cout << " ";
     if (print) cout << "Pos " << currentPos << " returning " << max + BoardHandler::getExpFromValue(currentVal) << endl;
-//    return max + BoardHandler::getExpFromValue(currentVal);
-    return max + powf(2.3, currentVal);
-//    return max + currentVal;
+    return max + std::pow(base, currentVal);
 }
 
 int HeuristicScorer::findMaxValue(Board board) const {
@@ -102,26 +133,4 @@ int HeuristicScorer::findMaxValue(Board board) const {
         max = std::max(max, board & 0xF);
     } while (board > 0);
     return static_cast<int>(max);
-}
-
-vector<int> HeuristicScorer::getNeighbours(int pos) const {
-    switch (pos) {
-        case 0: return vector<int>{1, 4};
-        case 1: return vector<int>{2, 5, 0};
-        case 2: return vector<int>{1, 3, 6};
-        case 3: return vector<int>{2, 7};
-        case 4: return vector<int>{0, 5};
-        case 5: return vector<int>{1, 4, 6, 9};
-        case 6: return vector<int>{2, 5, 7, 10};
-        case 7: return vector<int>{3, 6, 11};
-        case 8: return vector<int>{4, 9, 12};
-        case 9: return vector<int>{5, 8, 10, 13};
-        case 10: return vector<int>{6, 9, 11, 14};
-        case 11: return vector<int>{7, 10, 15};
-        case 12: return vector<int>{8, 13};
-        case 13: return vector<int>{9, 12, 14};
-        case 14: return vector<int>{10, 13, 15};
-        case 15: return vector<int>{11, 14};
-        default: return {};
-    }
 }

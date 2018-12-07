@@ -27,7 +27,7 @@ double ExpectiMax::getBestMoveRecurse(const Board board,
     if (gens == 0) {
         numEvals = 1;
         ++stats->leafEvals;
-        return scorer->getScore(board);
+        return scorer->getScoreSpawned(board);
     }
     //    for (int i = 0; i < indent; i++) cout << " ";
     //    cout << "getBestMoveRecurse: evaluating board:" << endl;
@@ -146,7 +146,7 @@ vector<ExpectiMax::BoardMoveProb> ExpectiMax::getPrunedMoves(const double prob,
     ret.reserve(possibleMoves.size());
 
     for (const auto &move : possibleMoves) {
-        auto score = scorer->getScore(move.board);
+        auto score = scorer->getScoreMoved(move.board);
         ret.emplace_back(move.board, move.move, score);
     }
 

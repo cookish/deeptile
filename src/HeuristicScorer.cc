@@ -43,7 +43,7 @@ HeuristicScorer::HeuristicScorer(std::shared_ptr<BoardHandler> bh)
     }
 }
 
-double HeuristicScorer::getScore(Board board) {
+double HeuristicScorer::getScoreSpawned(Board board) {
 //    cout << "==> Scorer: Evaluating board" << endl;
 //    bh.printHex(board);
 

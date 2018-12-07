@@ -9,7 +9,8 @@
 
 class ScorerInterface {
 public:
-    virtual double getScore(Board board) = 0;
+    virtual double getScoreSpawned(Board board) = 0;
+    virtual double getScoreMoved(Board board) = 0;
     virtual ~ScorerInterface() = default;
 };
 

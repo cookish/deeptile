@@ -14,7 +14,8 @@ class HeuristicScorer : public ScorerInterface
 {
 public:
     explicit HeuristicScorer(std::shared_ptr<BoardHandler> bh);
-    double getScore(Board board) override;
+    double getScoreSpawned(Board board) override;
+    double getScoreMoved(Board board) override { return getScoreSpawned(board); }
 
 private:
     int findMaxValue(Board board) const;

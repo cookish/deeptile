@@ -124,7 +124,8 @@ runGame(Board startBoard,
         string name) {
     bool passedCritialPoint = false;
     auto board = startBoard;
-    ExpectiMax em(bh, utility, make_unique<HeuristicScorer>(bh), make_unique<ScoreCache>(bh), make_unique<GameStats>());
+    auto utility2 = std::make_shared<Utility>();
+    ExpectiMax em(bh, utility2, make_unique<HeuristicScorer>(bh), make_unique<ScoreCache>(bh), make_unique<GameStats>());
     em.scoreForDeath = 0;
     int move = 0;
     double score = 0;
@@ -145,10 +146,10 @@ runGame(Board startBoard,
 //        bh->printHex(board);
         auto possibleTiles = bh->getPossibleSpawns(board);
 
-        auto placement = utility->randInt(static_cast<int>(possibleTiles.size()));
+        auto placement = utility2->randInt(static_cast<int>(possibleTiles.size()));
         auto place = possibleTiles[placement];
 //        cout << "Putting tile in place " << place << endl;
-        board |= (utility->coinToss(0.9) ? (1ull << (4 * place)) : (2ull << (4 * place)));
+        board |= (utility2->coinToss(0.9) ? (1ull << (4 * place)) : (2ull << (4 * place)));
 //        bh->printHex(board);
 //        if (i % 10 == 0) {
 //            cout << name << " >> " << " move: " << i << ", score: " << score

@@ -25,6 +25,7 @@ private:
     std::shared_ptr<BoardHandler> bh;
     double base = 2.3;
     std::array<int, 16> neighbourList;
+    std::array<double, 16> tileScore;
 };
 
 

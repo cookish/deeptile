@@ -36,6 +36,11 @@ HeuristicScorer::HeuristicScorer(std::shared_ptr<BoardHandler> bh)
     neighbourList[13] = 0x9ce;
     neighbourList[14] = 0xadf;
     neighbourList[15] = 0xbe;
+
+    tileScore[0] = 0;
+    for (int i=1; i<16; i++) {
+        tileScore[i] = std::pow(base, i);
+    }
 }
 
 double HeuristicScorer::getScore(Board board) {
@@ -59,10 +64,7 @@ double HeuristicScorer::sumZigZag(Board board) const {
         if (val > prevValue || val == 0) {
             break;
         }
-//        score += (1 << val);
-//        score += val;
-        score += powf(2.3, val);
-//        score += std::pow(base, val);
+        score += tileScore[val];
         prevValue = val;
     }
     return score;
@@ -124,8 +126,7 @@ double HeuristicScorer::sumAlongLongestMonotonicPathRecurse(const Board board,
     }
     if (print) for (int i =0; i < indent; i++) cout << " ";
     if (print) cout << "Pos " << currentPos << " returning " << max + BoardHandler::getExpFromValue(currentVal) << endl;
-    return max + powf(2.3, currentVal);
-//    return max + std::pow(base, currentVal);
+    return max + tileScore[currentVal];
 }
 
 int HeuristicScorer::findMaxValue(Board board) const {

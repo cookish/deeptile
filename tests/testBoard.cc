@@ -13,12 +13,12 @@ BoardHandler b(std::make_unique<RowHandler>());
 
 TEST_CASE( "Boards are rotated", "[boardHandler]" ) {
     auto board = Board{0xfedcba9876543210};
-    REQUIRE(b.rotateLeft(board) == 0xc840d951ea62fb73);
+    REQUIRE(b.rotateLeft(board) == 0xcb4325ade961078f);
 }
 
 TEST_CASE( "Boards are flipped", "[boardHandler]" ) {
     auto board = Board{0xfedcba9876543210};
-    REQUIRE(b.flip(board) == 0xfb73ea62d951c840);
+    REQUIRE(b.flip(board) == 0x34bcda52169ef870);
 }
 
 TEST_CASE( "Principal value is calculated", "[boardHandler]" ) {
@@ -30,5 +30,5 @@ TEST_CASE( "Principal value is calculated", "[boardHandler]" ) {
 
 TEST_CASE( "Boards are moved left", "[boardHandler]" ) {
     auto board = Board{0x1102400003038888};
-    REQUIRE(b.moveLeft(board) == 0x2200400040009900);
+    REQUIRE(b.moveLeft(board) == 0x2200000440000099);
 }

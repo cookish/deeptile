@@ -24,14 +24,14 @@ TEST_CASE( " Max tiles are combined", "[moveHandler]" ) {
 TEST_CASE( " Score is calculated ", "[moveHandler]" ) {
     RowHandler rh;
     int score;
-    rh.moveLeft(0x3355, score);
+    rh.moveReverse(0x3355, score);
     REQUIRE(score == 16 + 64);
-    rh.moveLeft(0x0011, score);
+    rh.moveReverse(0x0011, score);
     REQUIRE(score == 4);
-    rh.moveLeft(0x00AA, score);
+    rh.moveReverse(0x00AA, score);
     REQUIRE(score == 2048);
-    rh.moveLeft(0x00EE, score);
+    rh.moveReverse(0x00EE, score);
     REQUIRE(score == 32768);
-    rh.moveLeft(0xF0F0, score);
+    rh.moveReverse(0xF0F0, score);
     REQUIRE(score == 65536);
 }

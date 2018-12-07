@@ -179,7 +179,7 @@ runGame(Board startBoard,
 
 
 Board initBoard(Utility* utility) {
-    auto board = Board{0xDCBA0009ull << (4 * 8)};
+    auto board = Board{0xDCBA9ull << (4 * 11)};
 
     auto pos1 = utility->randInt(12);
     int pos2 = pos1;

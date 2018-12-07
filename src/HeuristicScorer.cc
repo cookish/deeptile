@@ -58,9 +58,9 @@ double HeuristicScorer::sumZigZag(Board board) const {
     auto pBoard = bh->getPrincipalBoard(board);
 //    bh->printHex(pBoard);
     double score = 0;
-    auto prevValue = 0xFFFF;
-    for (const auto & pos : {15, 14, 13, 12, 8, 9, 10, 11, 7, 6, 5, 4, 0, 1, 2, 3}) {
-        auto val = bh->getTileValue(pBoard, pos);
+    auto prevValue = 0xF;
+    for (int pos=0; pos<16; ++pos) {
+        auto val = bh->getTileValue(pBoard, (15 - pos));
         if (val > prevValue || val == 0) {
             break;
         }

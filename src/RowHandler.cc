@@ -22,7 +22,9 @@ RowHandler::RowHandler() {
 void RowHandler::initCache() {
     for (Row r = 0; r <= 0xFFFF; r++) {
         int score;
-        moveCache[r] = moveLeftInner(r, score);
+        moveLeftCache[r] = moveLeftInner(r, score);
+        moveReverseCache[reverseRow(r)] = reverseRow(moveLeftCache[r]);
+
         scoreCache[r] = score;
 
         auto total = 0;
@@ -36,18 +38,33 @@ void RowHandler::initCache() {
 }
 
 Board RowHandler::moveLeft(const Board row) const {
-    return moveCache[static_cast<Row>(row)];
+    return moveLeftCache[static_cast<Row>(row)];
 }
 
+Board RowHandler::moveReverse(Board row) const {
+    return moveReverseCache[static_cast<Row>(row)];
+}
 
 // gets both the moved row and the 2048 game score from any combined tiles
 Board RowHandler::moveLeft(Board row, int &score) const {
     score = scoreCache[static_cast<Row>(row)];
-    return moveCache[static_cast<Row>(row)];
+    return moveLeftCache[static_cast<Row>(row)];
+}
+
+Board RowHandler::moveReverse(Board row, int &score) const {
+    score = scoreCache[static_cast<Row>(row)];
+    return moveReverseCache[static_cast<Row>(row)];
 }
 
 int RowHandler::getTotal(Board row) const {
     return totalCache[row];
+}
+
+Row RowHandler::reverseRow(Row row) const {
+    return static_cast<Row>(((row & 0xF) << 12)
+        | ((row & 0xF0) << 4)
+        | ((row & 0xF00) >> 4)
+        | ((row & 0xF000) >> 12));
 }
 
 // moves a row to the left.

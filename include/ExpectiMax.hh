@@ -54,7 +54,8 @@ private:
         double prob;
         BoardMoveProb(Board board, int move, double prob) : board(board), move(move), prob(prob) {;}
     };
-    vector<BoardMoveProb> getPrunedMoves(double prob, const std::vector<BoardAndMove> &possibleMoves) const;
+    vector<ExpectiMax::BoardMoveProb>
+    getPrunedMoves(const double prob, const std::vector<BoardAndMove> &possibleMoves, int gens) const;
 };
 
 

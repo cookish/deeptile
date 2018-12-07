@@ -22,6 +22,7 @@ public:
     vector<double> totalEvalsPerGen;
     vector<double> cachedEvalsPerGen;
     vector<double> nodesPerGen;
+    vector<double> moveProbCalcsPerGen;
     void printRateInfo();
     void printCacheInfo();
 

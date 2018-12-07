@@ -19,12 +19,14 @@ public:
     int cachedEvals = 0;
     int leafEvals = 0;
     int totalEvals = 0;
+    int fastMoveProbCalcs = 0;
     bool passedCriticalPoint = false;
     vector<int> cacheHitsPerGen;
     vector<int> cacheMissesPerGen;
     vector<int> totalEvalsPerGen;
     vector<int> cachedEvalsPerGen;
     vector<int> nodesPerGen;
+    vector<int> moveProbCalcsPerGen;
 //    void printResult() const {
 //        cout << "Total: " << boardTotal << ", score: " << score << ", "
 //    }

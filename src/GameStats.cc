@@ -9,5 +9,6 @@ GameStats::GameStats()
       cacheMissesPerGen(vector<int>(10)),
       totalEvalsPerGen(vector<int>(10)),
       cachedEvalsPerGen(vector<int>(10)),
-      nodesPerGen(vector<int>(10))
+      nodesPerGen(vector<int>(10)),
+      moveProbCalcsPerGen(vector<int>(10))
 {;}

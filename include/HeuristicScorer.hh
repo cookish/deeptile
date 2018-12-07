@@ -16,6 +16,8 @@ public:
     explicit HeuristicScorer(std::shared_ptr<BoardHandler> bh);
     double getScoreSpawned(Board board) override;
     double getScoreMoved(Board board) override { return getScoreSpawned(board); }
+    // the board itself is a reasonable score...
+    double getScoreMovedFast(Board board) override { return static_cast<double>(board); }
 
 private:
     int findMaxValue(Board board) const;

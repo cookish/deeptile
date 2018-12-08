@@ -20,22 +20,22 @@ using std::vector;
 HeuristicScorer::HeuristicScorer(std::shared_ptr<BoardHandler> bh)
     : bh(std::move(bh))
 {
-    neighbourList[0] =  0x14;
-    neighbourList[1] =  0x250;
-    neighbourList[2] =  0x136;
-    neighbourList[3] =  0x27;
-    neighbourList[4] =  0x05;
-    neighbourList[5] =  0x1469;
-    neighbourList[6] =  0x257a;
-    neighbourList[7] =  0x36b;
-    neighbourList[8] =  0x49c;
-    neighbourList[9] =  0x58ad;
-    neighbourList[10] = 0x69be;
-    neighbourList[11] = 0x7af;
-    neighbourList[12] = 0x8d;
-    neighbourList[13] = 0x9ce;
-    neighbourList[14] = 0xadf;
-    neighbourList[15] = 0xbe;
+    neighbourList[0] =  0x17;
+    neighbourList[1] =  0x260;
+    neighbourList[2] =  0x135;
+    neighbourList[3] =  0x24;
+    neighbourList[4] =  0x35b;
+    neighbourList[5] =  0x246a;
+    neighbourList[6] =  0x1579;
+    neighbourList[7] =  0x068;
+    neighbourList[8] =  0x79f;
+    neighbourList[9] =  0x68ae;
+    neighbourList[10] = 0x59bd;
+    neighbourList[11] = 0x4ac;
+    neighbourList[12] = 0xbd;
+    neighbourList[13] = 0xace;
+    neighbourList[14] = 0x9df;
+    neighbourList[15] = 0x8e;
 
     tileScore[0] = 0;
     for (int i=1; i<16; i++) {

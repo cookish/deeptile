@@ -27,7 +27,7 @@ HeuristicScorer::HeuristicScorer(std::shared_ptr<BoardHandler> bh)
     neighbourList[4] =  0x35b;
     neighbourList[5] =  0x246a;
     neighbourList[6] =  0x1579;
-    neighbourList[7] =  0x068;
+    neighbourList[7] =  0x680;
     neighbourList[8] =  0x79f;
     neighbourList[9] =  0x68ae;
     neighbourList[10] = 0x59bd;

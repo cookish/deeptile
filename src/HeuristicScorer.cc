@@ -102,7 +102,7 @@ double HeuristicScorer::sumAlongLongestMonotonicPathRecurse(const Board board,
                                                             const int parentVal,
                                                             int indent) const
 {
-    bool print = true;
+    bool print = false;
     if (print) for (int i =0; i < indent; i++) printf( " ");
     if (print) printf( "Investigating pos: %d\n ",currentPos );
     auto currentVal = BoardHandler::getTileValue(board, currentPos);

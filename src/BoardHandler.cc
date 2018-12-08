@@ -88,9 +88,9 @@ Board BoardHandler::flip(const Board board) const {
 }
 
 Board BoardHandler::moveLeft(const Board board) const {
-    Board newBoard = rowHandler->moveReverse(board & 0xFFFF)
+    Board newBoard = rowHandler->moveRight(board & 0xFFFF)
         | rowHandler->moveLeft((board & 0xFFFF0000) >> 16) << 16
-        | rowHandler->moveReverse((board & 0xFFFF00000000) >> 32) << 32
+        | rowHandler->moveRight((board & 0xFFFF00000000) >> 32) << 32
         | rowHandler->moveLeft((board & 0xFFFF000000000000) >> 48) << 48
     ;
     return newBoard;
@@ -103,11 +103,11 @@ int BoardHandler::moveAndScore(Board &board, int move) const {
     int score = 0;
     int tempScore = 0;
     Board newBoard = 0;
-    newBoard |= rowHandler->moveReverse(board & 0xFFFF, tempScore);
+    newBoard |= rowHandler->moveRight(board & 0xFFFF, tempScore);
     score += tempScore;
     newBoard |= rowHandler->moveLeft((board & 0xFFFF0000) >> 16, tempScore) << 16;
     score += tempScore;
-    newBoard |= rowHandler->moveReverse((board & 0xFFFF00000000) >> 32, tempScore) << 32;
+    newBoard |= rowHandler->moveRight((board & 0xFFFF00000000) >> 32, tempScore) << 32;
     score += tempScore;
     newBoard |= rowHandler->moveLeft((board & 0xFFFF000000000000) >> 48, tempScore) << 48;
     score += tempScore;

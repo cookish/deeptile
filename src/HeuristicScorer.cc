@@ -92,7 +92,7 @@ double HeuristicScorer::sumAlongLongestMonotonicPath(Board board) const {
 
 double HeuristicScorer::sumAlongLongestMonotonicCornerPath(Board board) const {
     auto pBoard = bh->getPrincipalBoard(board);
-    bh->printBoard(pBoard);
+//    bh->printBoard(pBoard);
     auto score = sumAlongLongestMonotonicPathRecurse(pBoard, 15, 0xFFFF, 0);
     return score;
 }
@@ -138,7 +138,6 @@ double HeuristicScorer::sumAlongLongestMonotonicPathRecurse(const Board board,
             if (val > max) { max = val; }
         }
     }
-    cout << endl;
     if (print) for (int i =0; i < indent; i++) printf( " ");
     if (print) printf( "Pos %d returning %f\n", currentPos, max + tileScore[currentVal]);
     return max + tileScore[currentVal];

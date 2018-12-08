@@ -19,15 +19,19 @@ public:
     // the board itself is a reasonable score...
     double getScoreMovedFast(Board board) override;
 
-private:
-    int findMaxValue(Board board) const;
     double sumZigZag(Board board) const;
-    double sumAlongLongestMonotonicPath(Board board) const;
     double sumAlongLongestMonotonicCornerPath(Board board) const;
+    void setBase(double b);
+
+private:
+    void initTileScores();
+    int findMaxValue(Board board) const;
+    double sumAlongLongestMonotonicPath(Board board) const;
     double sumAlongLongestMonotonicPathRecurse(Board board, int currentPos, int parentVal, int indent) const;
     std::shared_ptr<BoardHandler> bh;
-    double base = 2.3;
+
     std::array<int, 16> neighbourList;
+    double base = 2.3;
     std::array<double, 16> tileScore;
 };
 

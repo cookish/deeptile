@@ -21,6 +21,7 @@ public:
 
     double sumZigZag(Board board) const;
     double sumAlongLongestMonotonicCornerPath(Board board) const;
+    double repeatMonotonic(Board board) const;
     void setBase(double b);
 
 private:
@@ -31,6 +32,7 @@ private:
     std::shared_ptr<BoardHandler> bh;
 
     std::array<int, 16> neighbourList;
+    std::array<int, 16> belowList;
     double base = 2.3;
     std::array<double, 16> tileScore;
 };

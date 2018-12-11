@@ -36,6 +36,23 @@ HeuristicScorer::HeuristicScorer(std::shared_ptr<BoardHandler> bh)
     neighbourList[13] = 0xace;
     neighbourList[14] = 0x9df;
     neighbourList[15] = 0x8e;
+
+    belowList[0] = -1;
+    belowList[1] = -1;
+    belowList[2] = -1;
+    belowList[3] = -1;
+    belowList[4] = 3;
+    belowList[5] = 2;
+    belowList[6] = 1;
+    belowList[7] = 0;
+    belowList[8] = 7;
+    belowList[9] = 6;
+    belowList[10] = 5;
+    belowList[11] = 4;
+    belowList[12] = 11;
+    belowList[13] = 10;
+    belowList[14] = 9;
+    belowList[15] = 8;
     setBase(2.3);
 }
 
@@ -57,9 +74,11 @@ double HeuristicScorer::getScoreSpawned(Board board) {
 
 //    auto score = sumAlongLongestMonotonicCornerPath(board);
 //    auto score = sumZigZag(board);
-    double fracInZigZag = 0.8;
-    auto score = (1 - fracInZigZag)*sumAlongLongestMonotonicCornerPath(board) + fracInZigZag*sumZigZag(board);
+    double fracInZigZag = 0.6;
+//    auto score = (1 - fracInZigZag)*sumAlongLongestMonotonicCornerPath(board) + fracInZigZag*sumZigZag(board);
 //    cout << "==> Evaluated: score " << score << endl;
+    auto score = fracInZigZag * repeatMonotonic(board) + (1 - fracInZigZag)*sumAlongLongestMonotonicCornerPath(board);
+//    auto score = repeatMonotonic(board) ;
     return score;
 }
 
@@ -154,4 +173,46 @@ int HeuristicScorer::findMaxValue(Board board) const {
 
 double HeuristicScorer::getScoreMovedFast(const Board board) {
     return static_cast<double>(bh->getPrincipalBoard(board));
+}
+
+double HeuristicScorer::repeatMonotonic(Board board) const {
+    auto pBoard = bh->getPrincipalBoard(board);
+    int current = 15;
+    int previous = 0xF;
+    int previousPos = -1;
+    double score = 0.;
+//    bh->printBoard(pBoard);
+    double factor = 1.;
+    while (current >= 0) {
+
+        auto val = bh->getTileValue(pBoard, current);
+        while (val == 0 && current > 0) {
+            val = bh->getTileValue(pBoard, --current);
+            previous = 0;
+        }
+        if (current == 0) break;
+
+        if (val <= previous) {
+            score += tileScore[val] * factor;
+//            score += bh->getExpFromValue(val) * factor;
+//            if (val < previous - 1 && previousPos > 0 && belowList[previousPos] > 0) {
+//                score += factor * 0.4 * sumAlongLongestMonotonicPathRecurse(pBoard, belowList[previousPos], val, 0);
+//            }
+        } else {
+//            factor *= (1 - (val - previous) / 15.);
+//            if (factor <= 0) factor = 0.1;
+            factor *= 0.5;
+            score += tileScore[val] * factor;
+//            break;
+//            for (int i = current-1; i >= 0; --i) {
+//                score -= bh->getExpFromValue(bh->getTileValue(pBoard, i));
+//            }
+        }
+
+        previous = val;
+        previousPos = current;
+        --current;
+    }
+//    cout << "Returning score: " << score << endl;
+    return static_cast<double>(score);
 }

@@ -5,10 +5,10 @@
 #include "GameStats.hh"
 
 GameStats::GameStats()
-    : cacheHitsPerGen(vector<int>(10)),
-      cacheMissesPerGen(vector<int>(10)),
-      totalEvalsPerGen(vector<int>(10)),
-      cachedEvalsPerGen(vector<int>(10)),
-      nodesPerGen(vector<int>(10)),
-      moveProbCalcsPerGen(vector<int>(10))
+    : cacheHitsPerGen(vector<int>(20)),
+      cacheMissesPerGen(vector<int>(20)),
+      totalEvalsPerGen(vector<int>(20)),
+      cachedEvalsPerGen(vector<int>(20)),
+      nodesPerGen(vector<int>(20)),
+      moveProbCalcsPerGen(vector<int>(20))
 {;}

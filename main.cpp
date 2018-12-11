@@ -137,8 +137,14 @@ runGame(Board startBoard,
     for (i = 0; true; ++i) {
         int numEvals = 0;
 
-        em.getBestMoveRecurse(board, move, gens, numEvals, 1.);
-        em.pruneCache(board);
+        int gens_now = gens;
+        while (numEvals < 3000 && move >= 0 && gens_now < 20) {
+            numEvals = 0;
+            em.getBestMoveRecurse(board, move, gens_now++, numEvals, 1.);
+            em.pruneCache(board);
+//            if (gens_now > 5) {cout << "gens:" << gens_now << endl;}
+        }
+
         totalEvals += numEvals;
         if (move < 0) break;
 //        cout << "Moving " << getMoveName(move) << endl;

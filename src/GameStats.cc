@@ -4,11 +4,19 @@
 
 #include "GameStats.hh"
 
-GameStats::GameStats()
-    : cacheHitsPerGen(vector<int>(20)),
-      cacheMissesPerGen(vector<int>(20)),
-      totalEvalsPerGen(vector<int>(20)),
-      cachedEvalsPerGen(vector<int>(20)),
-      nodesPerGen(vector<int>(20)),
-      moveProbCalcsPerGen(vector<int>(20))
-{;}
+void GameStats::addVal(string name, int val) { intValues[name] += val; }
+void GameStats::addVal(string name, double val) { doubleValues[name] += val; }
+void GameStats::setVal(string name, int val) { intValues[name] = val; }
+void GameStats::setVal(string name, double val) { doubleValues[name] = val; }
+void GameStats::addValForGen(string name, size_t gen, int val) {
+    if (gen > numGens) {
+        for (auto &valPerGen : intValuesPerGen) {
+            valPerGen.second.resize(gen+1);
+        }
+        numGens = gen + 1;
+    }
+    if (intValuesPerGen[name].size() < gen + 1) {
+        intValuesPerGen[name].resize(gen+1);
+    }
+    intValuesPerGen[name][gen] += val;
+}

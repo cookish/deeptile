@@ -12,19 +12,16 @@
 #include <string>
 using std::string;
 
+#include <unordered_map>
+using std::unordered_map;
+
 class RunStats
 {
 public:
     explicit RunStats(const std::vector<GameStats> &games);
-    std::map<string, double> d;
-    vector<double> cacheHitsPerGen;
-    vector<double> cacheMissesPerGen;
-    vector<double> totalEvalsPerGen;
-    vector<double> cachedEvalsPerGen;
-    vector<double> nodesPerGen;
-    vector<double> moveProbCalcsPerGen;
+    std::map<string, double> values;
+    unordered_map<string, vector<double> > valuesPerGen;
     void printRateInfo();
-    void printCacheInfo();
 
 private:
     size_t numGens = 0;

@@ -189,10 +189,10 @@ vector<ExpectiMax::BoardProb> ExpectiMax::getPrunedMoves2(Board board, const dou
 
             double score;
             if (gens < 2) {
-                ++stats->fastMoveProbCalcs;
+                stats->addValForGen("fastMoveProbCalcs", gens);
                 score = scorer->getScoreMovedFast(movedBoard);
             } else {
-                ++stats->moveProbCalcsPerGen[gens];
+                stats->addValForGen("slowMoveProbCalcs", gens);
                 score = scorer->getScoreMoved(movedBoard);
             }
             ret.emplace_back(movedBoard, score);

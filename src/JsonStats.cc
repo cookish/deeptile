@@ -9,12 +9,9 @@ using nlohmann::json;
 
 
 nlohmann::json JsonStats::create(const RunStats &rs) {
-    json j(rs.d);
-    j["cacheHitsPerGen"] = json(rs.cacheHitsPerGen);
-    j["cacheMissesPerGen"] = json(rs.cacheMissesPerGen);
-    j["totalEvalsPerGen"] = json(rs.totalEvalsPerGen);
-    j["cachedEvalsPerGen"] = json(rs.cachedEvalsPerGen);
-    j["nodesPerGen"] = json(rs.nodesPerGen);
-    j["moveProbCalcsPerGen"] = json(rs.moveProbCalcsPerGen);
+    json j(rs.values);
+    for (const auto &valPerGen : rs.valuesPerGen) {
+        j[valPerGen.first] = json(valPerGen.second);
+    }
     return j;
 }

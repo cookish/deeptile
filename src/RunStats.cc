@@ -10,72 +10,31 @@ using std::endl;
 
 RunStats::RunStats(const std::vector<GameStats> &games) {
     auto numGames = games.size();
-
+    numGens = 0;
+    for (const auto &game : games) {
+        numGens = std::max(numGens, game.numGens);
+    }
     if (numGames > 0) {
-        numGens = games[0].cacheHitsPerGen.size();
-        cacheHitsPerGen.resize(numGens);
-        cacheMissesPerGen.resize(numGens);
-        totalEvalsPerGen.resize(numGens);
-        cachedEvalsPerGen.resize(numGens);
-        nodesPerGen.resize(numGens);
-        moveProbCalcsPerGen.resize(numGens);
         for (const auto &game : games) {
-            d["score"] += game.score * 1. / numGames;
-            d["boardTotal"] += game.boardTotal * 1. / numGames;
-            d["timeTaken"] += game.timeTaken * 1. / numGames;
-            d["moves"] += game.moves * 1. / numGames;
-            d["cachedEvals"] += game.cachedEvals * 1. / numGames;
-            d["leafEvals"] += game.leafEvals * 1. / numGames;
-            d["totalEvals"] += game.totalEvals * 1. / numGames;
-            d["passedCriticalPoint"] += game.passedCriticalPoint ? 1./numGames : 0;
-            d["fastMoveProbCalcs"] += game.fastMoveProbCalcs * 1. / numGames;
-            for (int i = 0; i < cachedEvalsPerGen.size(); ++i) {
-                cacheHitsPerGen[i] += game.cacheHitsPerGen[i] * 1. / numGames;
-                cacheMissesPerGen[i] += game.cacheMissesPerGen[i] * 1. / numGames;
-                totalEvalsPerGen[i] += game.totalEvalsPerGen[i] * 1. / numGames;
-                cachedEvalsPerGen[i] += game.cachedEvalsPerGen[i] * 1. / numGames;
-                nodesPerGen[i] += game.nodesPerGen[i] * 1. / numGames;
-                moveProbCalcsPerGen[i] += game.moveProbCalcsPerGen[i] * 1. / numGames;
+            for (const auto &dStat : game.doubleValues) {
+                values[dStat.first] += dStat.second / numGames;
             }
-        }
-        size_t nonZeroGens = 0;
-        for (nonZeroGens=0; nonZeroGens<numGens; ++nonZeroGens) {
-            if (cacheHitsPerGen[nonZeroGens] == 0
-                && cacheMissesPerGen[nonZeroGens] == 0
-                && totalEvalsPerGen[nonZeroGens] == 0
-                && cachedEvalsPerGen[nonZeroGens] == 0
-                && nodesPerGen[nonZeroGens] == 0
-                && moveProbCalcsPerGen[nonZeroGens] == 0)
-            {
-                break;
+            for (const auto &iStat : game.doubleValues) {
+                values[iStat.first] += iStat.second * 1. / numGames;
             }
-        }
-        if (nonZeroGens != numGens) {
-            numGens = nonZeroGens;
-            cacheHitsPerGen.resize(numGens);
-            cacheMissesPerGen.resize(numGens);
-            totalEvalsPerGen.resize(numGens);
-            cachedEvalsPerGen.resize(numGens);
-            nodesPerGen.resize(numGens);
-            moveProbCalcsPerGen.resize(numGens);
+            values["passedCriticalPoint"] += game.passedCriticalPoint ? 1. / numGames : 0;
+            for (const auto &gameVals : game.intValuesPerGen) {
+                valuesPerGen[gameVals.first].resize(numGens);
+                for (int gen = 0; gen < gameVals.second.size(); ++gen) {
+                    valuesPerGen[gameVals.first][gen] += gameVals.second[gen] * 1. / numGames;
+                }
+            }
         }
     }
 }
 
 void RunStats::printRateInfo() {
-    cout << "Evaluations/s: " << (d["leafEvals"] / d["timeTaken"])
-         << ", moves/s: " << (d["moves"] / d["timeTaken"])
+    cout << "Evaluations/s: " << (values["leafEvals"] / values["timeTaken"])
+         << ", moves/s: " << (values["moves"] / values["timeTaken"])
          << endl;
-}
-
-void RunStats::printCacheInfo() {
-    cout << "Overall leaf evals fraction: " << d["leafEvals"] / d["totalEvals"] << endl;
-    cout << "Per generation:" << endl;
-    for (auto i=0; i<numGens; ++i) {
-        cout << "  Gen " << i << " > "
-             << "cache hits: " << cacheHitsPerGen[i] *1. / (cacheHitsPerGen[i] + cacheMissesPerGen[i])
-             << ", cached evals: " << cachedEvalsPerGen[i] * 1. / totalEvalsPerGen[i]
-             << ", evals per node: " << totalEvalsPerGen[i] * 1. / nodesPerGen[i]
-             << endl;
-    }
 }

@@ -83,8 +83,7 @@ int main() {
     auto js = JsonStats::create(runStats);
     std::cout << js.dump(4) << std::endl;
     runStats.printRateInfo();
-    runStats.printCacheInfo();
-    cout << "Passing critical point: " << runStats.d["passedCriticalPoint"] << endl;
+    cout << "Passing critical point: " << runStats.values["passedCriticalPoint"] << endl;
     return 0;
 }
 
@@ -181,11 +180,11 @@ runGame(Board startBoard,
     auto stats = em.getFinalStats();
     stats->finalBoard = board;
     stats->startBoard = startBoard;
-    stats->score = score;
-    stats->boardTotal = bh->getBoardTotal(stats->finalBoard);
-    stats->moves = i;
-    stats->timeTaken = timeTaken;
-    stats->totalEvals = totalEvals;
+    stats->setVal("score", score);
+    stats->setVal("boardTotal", bh->getBoardTotal(stats->finalBoard));
+    stats->setVal("moves", i);
+    stats->setVal("timeTaken", timeTaken);
+    stats->setVal("totalEvals", totalEvals);
     stats->passedCriticalPoint = passedCritialPoint;
     return stats;
 }

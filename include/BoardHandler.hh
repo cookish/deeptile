@@ -36,6 +36,7 @@ public:
     }
     TileList getPossibleSpawns(Board board) const;
     vector<BoardAndMove> getPossibleMoves(Board board) const;
+    bool isDead(Board board) const;
     int getBoardTotal(Board board) const;
     int getHighestTile(Board board) const;
     void printBoard(Board board) const;

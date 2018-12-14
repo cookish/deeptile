@@ -133,6 +133,16 @@ vector<BoardAndMove> BoardHandler::getPossibleMoves(Board board) const {
     return v;
 }
 
+bool BoardHandler::isDead(Board board) const {
+    Board movedBoard = moveLeft(board);
+    for (int i = 0; i < 3; ++i) {
+        if (movedBoard != board) return false;
+        board = rotateLeft(board);
+        movedBoard = moveLeft(board);
+    }
+    return (movedBoard == board);
+}
+
 TileList BoardHandler::getPossibleSpawns(Board board) const {
     Board ret = 0;
     int numSpawns=0;

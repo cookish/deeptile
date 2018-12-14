@@ -11,6 +11,9 @@
 #include "ScoreCache.hh"
 #include "GameStats.hh"
 
+#include <array>
+using std::array;
+
 using std::unique_ptr;
 using std::shared_ptr;
 
@@ -34,6 +37,12 @@ public:
     unique_ptr<GameStats> getFinalStats() { return std::move(stats); }
     void pruneCache(Board board);
 
+    int createTree(Board board, int gens);
+    void printTree();
+    void scoreLeaves();
+    double evaluateTree();
+    int getBestMove(Board &newBoard);
+
 private:
     shared_ptr<BoardHandler> bh;
     shared_ptr<Utility> utility;
@@ -46,7 +55,7 @@ private:
         double prob;
         TilePosProb(int tile, int pos, double prob) : tile(tile), pos(pos), prob(prob) {;}
     };
-    vector<TilePosProb> getPrunedSpawns(Board board, double prob) const;
+    unordered_map<Board, double> getPrunedSpawns(const Board board, const double prob) const;
 
     struct BoardMoveProb {
         Board board;
@@ -54,8 +63,25 @@ private:
         double prob;
         BoardMoveProb(Board board, int move, double prob) : board(board), move(move), prob(prob) {;}
     };
+    struct BoardProb {
+        Board board;
+        double prob;
+        BoardProb(Board board, double prob ) : board(board), prob(prob) {;}
+    };
     vector<ExpectiMax::BoardMoveProb>
     getPrunedMoves(const double prob, const std::vector<BoardAndMove> &possibleMoves, int gens) const;
+    vector<BoardProb> getPrunedMoves2(Board board, const double prob, int gens) const;
+
+
+    using BoardList = vector<Board>;
+    using BoardProbList = vector<BoardProb>;
+    vector<unordered_map<Board, BoardList> > spawnedBoardChildren;
+    vector<unordered_map<Board, BoardProbList> > movedBoardChildren;
+    unordered_map<Board, double> spawnedBoardsToProcess;
+    unordered_map<Board, double> movedBoardsToProcess;
+    vector<unordered_map<Board, double> > genMvdScores;
+    vector<unordered_map<Board, double> > genSpwndScores;
+
 };
 
 

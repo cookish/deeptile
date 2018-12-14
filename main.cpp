@@ -138,12 +138,20 @@ runGame(Board startBoard,
         int numEvals = 0;
 
         int gens_now = gens;
-        while (numEvals < 3000 && move >= 0 && gens_now < 20) {
-            numEvals = 0;
-            em.getBestMoveRecurse(board, move, gens_now++, numEvals, 1.);
-            em.pruneCache(board);
-//            if (gens_now > 5) {cout << "gens:" << gens_now << endl;}
+        while (numEvals < 2000 && move >= 0 && gens_now < 20) {
+//            em.getBestMoveRecurse(board, move, gens_now++, numEvals, 1.);
+            numEvals = em.createTree(board, gens_now++);
         }
+        em.scoreLeaves();
+        score = em.evaluateTree();
+//            Board movedBoard;
+//        bh->printHex(board);
+//        cout << endl;
+        move = em.getBestMove(board);
+//            em.printTree();
+//            em.pruneCache(board);
+//            if (gens_now > 5) {cout << "gens:" << gens_now << endl;}
+//        }
 
         totalEvals += numEvals;
         if (move < 0) break;
@@ -156,8 +164,7 @@ runGame(Board startBoard,
         auto place = bh->getSpawnFromList(possibleTiles, placement);
 //        cout << "Putting tile in place " << place << endl;
         board |= (utility2->coinToss(0.9) ? (1ull << (4 * place)) : (2ull << (4 * place)));
-//        bh->printHex(board);
-//        if (i % 10 == 0) {
+//        if (i % 100 == 0) {
 //            cout << name << " >> " << " move: " << i << ", score: " << score
 //                 << ", numEvals: " << numEvals << endl;
 //        }
@@ -186,6 +193,7 @@ runGame(Board startBoard,
 
 Board initBoard(Utility* utility) {
     auto board = Board{0xDCBA9ull << (4 * 11)};
+//    auto board = Board{0};
 
     auto pos1 = utility->randInt(12);
     int pos2 = pos1;

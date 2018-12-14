@@ -177,16 +177,12 @@ int BoardHandler::getHighestTile(const Board board) const {
 
 void BoardHandler::printHex(const Board board, const int indent) const {
     cout << std::hex;
-    for (int i = 0; i < indent; i++) cout << " ";
-    cout << std::setfill('0') << std::setw(4) << (board >> 12*4) << "\n";
-    for (int i = 0; i < indent; i++) cout << " ";
-    cout << std::setfill('0') << std::setw(4) << rowHandler->reverseRow(static_cast<Row>((board >> 8*4) & 0xFFFF)) << "\n";
-    for (int i = 0; i < indent; i++) cout << " ";
-    cout << std::setfill('0') << std::setw(4) << ((board >> 4*4) & 0xFFFF) << "\n";
-    for (int i = 0; i < indent; i++) cout << " ";
-    cout << std::setfill('0') << std::setw(4) << rowHandler->reverseRow(static_cast<Row>(board & 0xFFFF)) << "\n\n";
+    for (int i = 15; i >= 0; --i) {
+        auto val = getTileValue(board, i);
+        if (val > 0) cout << val; else cout << ".";
+        if (i % 4 == 0 && i > 0) cout << "|";
+    }
     cout << std::dec;
-//    cout << "---------------" << endl;
 }
 
 void BoardHandler::printBoard(const Board board) const {

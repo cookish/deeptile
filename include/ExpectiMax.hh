@@ -31,11 +31,8 @@ public:
           cache(std::move(cache)),
           stats(std::move(stats))
     {;}
-    double getBestMoveRecurse(Board board, int &move, int gens, int &numEvals, double prob, int indent = 0);
-    double getAverageSpawnRecurse(Board board, int gens, int &numEvals, double prob, int indent = 0);
     double scoreForDeath = 0;
     unique_ptr<GameStats> getFinalStats() { return std::move(stats); }
-    void pruneCache(Board board);
 
     int createTree(Board board, int gens);
     void printTree();
@@ -44,37 +41,23 @@ public:
     int getBestMove(Board &newBoard);
 
 private:
-    shared_ptr<BoardHandler> bh;
-    shared_ptr<Utility> utility;
-    unique_ptr<ScorerInterface> scorer;
-    unique_ptr<ScoreCache> cache;
-    unique_ptr<GameStats> stats;
-    struct TilePosProb {
-        int tile;
-        int pos;
-        double prob;
-        TilePosProb(int tile, int pos, double prob) : tile(tile), pos(pos), prob(prob) {;}
-    };
-    unordered_map<Board, double> getPrunedSpawns(const Board board, const double prob) const;
-
-    struct BoardMoveProb {
-        Board board;
-        int move;
-        double prob;
-        BoardMoveProb(Board board, int move, double prob) : board(board), move(move), prob(prob) {;}
-    };
     struct BoardProb {
         Board board;
         double prob;
         BoardProb(Board board, double prob ) : board(board), prob(prob) {;}
     };
-    vector<ExpectiMax::BoardMoveProb>
-    getPrunedMoves(const double prob, const std::vector<BoardAndMove> &possibleMoves, int gens) const;
-    vector<BoardProb> getPrunedMoves2(Board board, const double prob, int gens) const;
-
-
     using BoardList = vector<Board>;
     using BoardProbList = vector<BoardProb>;
+
+    shared_ptr<BoardHandler> bh;
+    shared_ptr<Utility> utility;
+    unique_ptr<ScorerInterface> scorer;
+    unique_ptr<ScoreCache> cache;
+    unique_ptr<GameStats> stats;
+
+    vector<BoardProb> getPrunedMoves(Board board, double prob, int gens) const;
+    unordered_map<Board, double> getPrunedSpawns(Board board, const double prob) const;
+
     vector<unordered_map<Board, BoardList> > spawnedBoardChildren;
     vector<unordered_map<Board, BoardProbList> > movedBoardChildren;
     unordered_map<Board, double> spawnedBoardsToProcess;

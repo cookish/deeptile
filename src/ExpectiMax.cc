@@ -39,7 +39,6 @@ int ExpectiMax::createTree(Board board, int gens) {
 
 
             auto moveOptions = getPrunedMoves(spBoard, cumulProb, currentGen);
-
             for (const auto &moveOption : moveOptions) {
                 newBoard = bh->getPrincipalBoard(moveOption.board);
                 spChildren[spBoard].emplace_back(newBoard);
@@ -122,22 +121,28 @@ int ExpectiMax::getBestMove(Board &newBoard) {
     }
     auto root = genSpwndScores.back().begin();
     auto bestScore = root->second;
-    auto board = root->first;
-    newBoard = board;
+//    cout << "Best score: " << bestScore << ", gen: " << genSpwndScores.size() - 1 << endl;
+//    cout << "Options: ";
+    int retMove = -1;
     for (int m = 0; m < 4; ++m) {
-        newBoard = bh->getPrincipalBoard(bh->moveLeft(board));
-        auto testScore = genMvdScores[genMvdScores.size() - 1][newBoard];
-        if (std::abs(genMvdScores[genMvdScores.size() - 1][newBoard] - bestScore) < 0.000001 * bestScore) {
-            return m;
+        auto movedBoard = bh->moveLeft(board);
+        if (movedBoard != board) {
+
+            auto movedPBoard = bh->getPrincipalBoard(movedBoard);
+            auto boardScore = genMvdScores[genMvdScores.size() - 1][movedPBoard];
+//            cout << utility->getMoveName(m) << " (" << boardScore << ") ";
+            if (std::abs(genMvdScores[genMvdScores.size() - 1][movedPBoard] - bestScore) < 0.000001 * bestScore) {
+                retMove = m;
+            }
         }
         board = bh->rotateLeft(board);
     }
-    return -1;
+//    cout << endl;
+    return retMove;
 }
 
 void ExpectiMax::printTree() {
-    int gens = spawnedBoardChildren.size() - 1;
-    int indent = 0;
+    int gens = static_cast<int>(spawnedBoardChildren.size()) - 1;
     cout << std::hex;
     for (int currentGen = gens; currentGen > 0; --currentGen) {
         cout << "\n-------------------------------------------------------------------------------------------\n";
@@ -152,6 +157,7 @@ void ExpectiMax::printTree() {
             for (const auto &child : spBoardVal.second) {
                 cout << "  ";
                 bh->printHex(child);
+                cout << " (" << genMvdScores[currentGen][child] << ")";
             }
             cout << "\n";
         }
@@ -169,6 +175,7 @@ void ExpectiMax::printTree() {
                 }
                 printf("  %.3e * ", child.prob);
                 bh->printHex(child.board);
+                cout << " (" << genSpwndScores[currentGen - 1][child.board] << ")";
                 ++i;
 
             }
@@ -268,16 +275,16 @@ unordered_map<Board, double> ExpectiMax::getPrunedSpawns(const Board board, cons
             spBoard = bh->getPrincipalBoard(board | (static_cast<uint64_t>(1) << (4 * pos)));
             ret[spBoard] += 0.9 / numSpawns;
         }
-        auto randPos = utility->randInt(numSpawns);
+        auto randPos = bh->getSpawnFromList(possibleSpawns, utility->randInt(numSpawns));
         spBoard = bh->getPrincipalBoard(board | (static_cast<uint64_t>(2) << (4 * randPos)));
         ret[spBoard] += 0.1;
 
     } else {
-        auto randPos = utility->randInt(numSpawns);
+        auto randPos = bh->getSpawnFromList(possibleSpawns, utility->randInt(numSpawns));
         spBoard = bh->getPrincipalBoard(board | (static_cast<uint64_t>(1) << (4 * randPos)));
         ret[spBoard] += 0.9;
-        randPos = utility->randInt(numSpawns);
-        spBoard = bh->getPrincipalBoard(board | (static_cast<uint64_t>(1) << (4 * randPos)));
+        randPos = bh->getSpawnFromList(possibleSpawns, utility->randInt(numSpawns));
+        spBoard = bh->getPrincipalBoard(board | (static_cast<uint64_t>(2) << (4 * randPos)));
         ret[spBoard] += 0.1;
     }
     return ret;

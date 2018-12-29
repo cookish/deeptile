@@ -38,7 +38,7 @@ public:
     void printTree();
     void scoreLeaves();
     double evaluateTree();
-    int getBestMove(Board &newBoard);
+    int getBestMove(Board board);
 
 private:
     struct BoardProb {

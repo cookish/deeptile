@@ -6,6 +6,8 @@
 #define MLTWO_UTILITY_HH
 
 #include <random>
+#include <string>
+using std::string;
 
 class Utility
 {
@@ -13,6 +15,8 @@ public:
     Utility();
     int randInt(int max);
     bool coinToss(double prob);
+    string getMoveName(int move);
+
 
 private:
     std::mt19937 rng;

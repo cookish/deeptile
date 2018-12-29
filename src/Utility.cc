@@ -20,3 +20,15 @@ bool Utility::coinToss(double prob) {
     std::bernoulli_distribution coinDistribution(prob);
     return coinDistribution(rng);
 }
+
+
+string Utility::getMoveName(int move) {
+    switch(move) {
+        case 0: return "left";
+        case 1: return "up";
+        case 2: return "right";
+        case 3: return "down";
+        default:
+            return "error";
+    }
+}

@@ -20,7 +20,7 @@ public:
     void addVal(string name, double val);
     void setVal(string name, int val = 1);
     void setVal(string name, double val);
-    void addValForGen(string name, size_t gen, int val = 1);
+    void addValForGen(string name, int gen, int val = 1);
     Board startBoard = 0;
     Board finalBoard = 0;
     bool passedCriticalPoint = false;

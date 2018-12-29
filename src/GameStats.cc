@@ -8,7 +8,7 @@ void GameStats::addVal(string name, int val) { intValues[name] += val; }
 void GameStats::addVal(string name, double val) { doubleValues[name] += val; }
 void GameStats::setVal(string name, int val) { intValues[name] = val; }
 void GameStats::setVal(string name, double val) { doubleValues[name] = val; }
-void GameStats::addValForGen(string name, size_t gen, int val) {
+void GameStats::addValForGen(string name, int gen, int val) {
     if (gen > numGens) {
         for (auto &valPerGen : intValuesPerGen) {
             valPerGen.second.resize(gen+1);

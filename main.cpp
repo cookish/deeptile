@@ -28,7 +28,6 @@ using std::make_unique;
 using std::make_shared;
 
 Board initBoard(Utility* utility);
-string getMoveName(int move);
 unique_ptr<GameStats>
 runGame(Board startBoard,
         int gens,
@@ -133,6 +132,9 @@ runGame(Board startBoard,
     auto start = steady_clock::now();
 //    auto start = clock();
     int totalEvals = 0;
+    auto verbosity = 0;
+    cout << "Starting board:" << endl;
+    bh->printBoard(board);
     for (i = 0; true; ++i) {
         int numEvals = 0;
 
@@ -154,16 +156,17 @@ runGame(Board startBoard,
 
         totalEvals += numEvals;
         if (move < 0) break;
-//        cout << "Moving " << getMoveName(move) << endl;
+        if (verbosity > 0)  cout << "Moving " << utility->getMoveName(move) << endl;
         score += bh->moveAndScore(board, move);
-//        bh->printHex(board);
+        if (verbosity > 1)   bh->printBoard(board);
         auto possibleTiles = bh->getPossibleSpawns(board);
 
         auto placement = utility2->randInt(static_cast<int>(possibleTiles & 0xFull));
         auto place = bh->getSpawnFromList(possibleTiles, placement);
-//        cout << "Putting tile in place " << place << endl;
+        if (verbosity > 1)  cout << "Putting tile in place " << place << endl;
         board |= (utility2->coinToss(0.9) ? (1ull << (4 * place)) : (2ull << (4 * place)));
 //        if (i % 100 == 0) {
+        if (verbosity > 0)  bh->printBoard(board);
 //            cout << name << " >> " << " move: " << i << ", score: " << score
 //                 << ", numEvals: " << numEvals << endl;
 //        }
@@ -209,15 +212,4 @@ Board initBoard(Utility* utility) {
         }
     }
     return board;
-}
-
-string getMoveName(int move) {
-    switch(move) {
-        case 0: return "left";
-        case 1: return "up";
-        case 2: return "right";
-        case 3: return "down";
-        default:
-            return "error";
-    }
 }

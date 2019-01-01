@@ -133,13 +133,15 @@ runGame(Board startBoard,
 //    auto start = clock();
     int totalEvals = 0;
     auto verbosity = 0;
-    cout << "Starting board:" << endl;
-    bh->printBoard(board);
+    if (verbosity > 0) {
+        cout << "Starting board:" << endl;
+        bh->printBoard(board);
+    }
     for (i = 0; true; ++i) {
         int numEvals = 0;
 
         int gens_now = gens;
-        while (numEvals < 2000 && move >= 0 && gens_now < 20) {
+        while (numEvals < 400 && move >= 0 && gens_now < 20) {
 //            em.getBestMoveRecurse(board, move, gens_now++, numEvals, 1.);
             numEvals = em.createTree(board, gens_now++);
         }
@@ -149,7 +151,11 @@ runGame(Board startBoard,
 //        bh->printHex(board);
 //        cout << endl;
         move = em.getBestMove(board);
-//            em.printTree();
+
+        if (verbosity > 2) {
+            em.evaluteEffort();
+            em.printTree();
+        }
 //            em.pruneCache(board);
 //            if (gens_now > 5) {cout << "gens:" << gens_now << endl;}
 //        }
@@ -165,15 +171,15 @@ runGame(Board startBoard,
         auto place = bh->getSpawnFromList(possibleTiles, placement);
         if (verbosity > 1)  cout << "Putting tile in place " << place << endl;
         board |= (utility2->coinToss(0.9) ? (1ull << (4 * place)) : (2ull << (4 * place)));
-//        if (i % 100 == 0) {
         if (verbosity > 0)  bh->printBoard(board);
+//        if (i % 500 == 0) {
 //            cout << name << " >> " << " move: " << i << ", score: " << score
 //                 << ", numEvals: " << numEvals << endl;
 //        }
         // used to see if board crosses critical point
         if (bh->getHighestTile(board) == 14) {
             passedCritialPoint = true;
-            break;
+//            break;
         }
     }
     auto timeTaken = std::chrono::duration_cast<std::chrono::duration<double> >

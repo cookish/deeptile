@@ -38,6 +38,7 @@ public:
     void printTree();
     void scoreLeaves();
     double evaluateTree();
+    void evaluteEffort();
     int getBestMove(Board board);
 
 private:
@@ -64,6 +65,8 @@ private:
     unordered_map<Board, double> movedBoardsToProcess;
     vector<unordered_map<Board, double> > genMvdScores;
     vector<unordered_map<Board, double> > genSpwndScores;
+    vector<unordered_map<Board, int> > genMvdEffort;
+    vector<unordered_map<Board, int> > genSpwndEffort;
 
 };
 

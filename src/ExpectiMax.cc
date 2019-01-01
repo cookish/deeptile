@@ -17,11 +17,15 @@ int ExpectiMax::createTree(Board board, int gens) {
     movedBoardChildren.clear();
     genMvdScores.clear();
     genSpwndScores.clear();
+    genMvdEffort.clear();
+    genSpwndEffort.clear();
     spawnedBoardsToProcess.clear();
     spawnedBoardChildren.resize(gens+1);
     movedBoardChildren.resize(gens+1);
     genMvdScores.resize(gens+1);
     genSpwndScores.resize(gens+1);
+    genMvdEffort.resize(gens+1);
+    genSpwndEffort.resize(gens+1);
 
     auto pBoard = bh->getPrincipalBoard(board);
     Board newBoard;
@@ -115,7 +119,35 @@ double ExpectiMax::evaluateTree() {
     return root->second;
 }
 
-int ExpectiMax::getBestMove(Board &newBoard) {
+void ExpectiMax::evaluteEffort() {
+    auto numGens = movedBoardChildren.size() - 1;
+    for (int currentGen = 1; currentGen <= numGens; ++currentGen) {
+        Board board;
+
+        // go through moved boards, effort = sum of effort of spawned children
+        for (const auto &boardChildren : movedBoardChildren[currentGen]) {
+            int effort = 0;
+            board = boardChildren.first;
+            for (const auto &child : boardChildren.second) {
+                effort += (currentGen == 1 ? 1 : genSpwndEffort[currentGen - 1][child.board]);
+            }
+            genMvdEffort[currentGen][board] = effort;
+        }
+
+        // go through spawned boards, effort = sum of effort of moved children
+        for (const auto &boardChildren : spawnedBoardChildren[currentGen]) {
+            int effort = 0;
+            board = boardChildren.first;
+            for (const auto &child : boardChildren.second) {
+                effort += (currentGen == 1 ? 1 : genMvdEffort[currentGen][child]);
+            }
+            genSpwndEffort[currentGen][board] = effort;
+        }
+    }
+}
+
+
+int ExpectiMax::getBestMove(Board board) {
     if (genSpwndScores.back().empty()) {
         return -1;
     }
@@ -158,6 +190,7 @@ void ExpectiMax::printTree() {
                 cout << "  ";
                 bh->printHex(child);
                 cout << " (" << genMvdScores[currentGen][child] << ")";
+                cout << "[" << genMvdEffort[currentGen][child] << "]";
             }
             cout << "\n";
         }
@@ -176,6 +209,7 @@ void ExpectiMax::printTree() {
                 printf("  %.3e * ", child.prob);
                 bh->printHex(child.board);
                 cout << " (" << genSpwndScores[currentGen - 1][child.board] << ")";
+                cout << "[" << genSpwndEffort[currentGen - 1][child.board] << "]";
                 ++i;
 
             }

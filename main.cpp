@@ -133,8 +133,8 @@ runGame(Board startBoard,
     auto start = steady_clock::now();
 //    auto start = clock();
     int totalEvals = 0;
-    auto verbosity = 0;
-    if (verbosity > 0) {
+    auto verbosity = 1;
+    if (verbosity > 1) {
         cout << "Starting board:" << endl;
         cout << Output::formatBoard(board);
     }
@@ -151,9 +151,12 @@ runGame(Board startBoard,
 //            Board movedBoard;
 //        bh->printHex(board);
 //        cout << endl;
-        move = em.getBestMove(board);
+        auto moveInfo = em.getMoves(board);
+        totalEvals += numEvals;
+        if (moveInfo.empty()) break;
+        move = moveInfo.front().move;
 
-        if (verbosity > 2) {
+        if (verbosity > 3) {
             em.evaluateEffort();
             em.printTree(2);
         }
@@ -161,18 +164,21 @@ runGame(Board startBoard,
 //            if (gens_now > 5) {cout << "gens:" << gens_now << endl;}
 //        }
 
-        totalEvals += numEvals;
-        if (move < 0) break;
-        if (verbosity > 0)  cout << "Moving " << utility->getMoveName(move) << endl;
+
+        if (verbosity > 1)  {
+            cout << Output::formatMoveInfo(board, moveInfo);
+            cout << endl;
+        }
         score += bh->moveAndScore(board, move);
         if (verbosity > 2)  cout << Output::formatBoard(board);
         auto possibleTiles = bh->getPossibleSpawns(board);
 
         auto placement = utility2->randInt(static_cast<int>(possibleTiles & 0xFull));
         auto place = bh->getSpawnFromList(possibleTiles, placement);
-        if (verbosity > 1)  cout << "Putting tile in place " << place << endl;
+        if (verbosity > 2)  cout << "Putting tile in place " << place << endl;
         board |= (utility2->coinToss(0.9) ? (1ull << (4 * place)) : (2ull << (4 * place)));
-        if (verbosity > 0)  bh->printBoard(board);
+
+
 //        if (i % 500 == 0) {
 //            cout << name << " >> " << " move: " << i << ", score: " << score
 //                 << ", numEvals: " << numEvals << endl;

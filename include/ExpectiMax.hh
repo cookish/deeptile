@@ -17,6 +17,16 @@ using std::array;
 using std::unique_ptr;
 using std::shared_ptr;
 
+struct MoveBoardScoreEffort {
+    int move;
+    Board board;
+    double score;
+    int effort;
+    MoveBoardScoreEffort(int move, Board board, double score, int effort )
+    : move(move), board(board), score(score), effort(effort) {;}
+};
+
+
 class ExpectiMax
 {
 public:
@@ -40,6 +50,7 @@ public:
     double evaluateTree();
     void evaluateEffort();
     int getBestMove(Board board);
+    vector<MoveBoardScoreEffort> getMoves(Board board);
 
 private:
     struct BoardProb {

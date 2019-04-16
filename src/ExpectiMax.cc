@@ -149,31 +149,34 @@ void ExpectiMax::evaluateEffort() {
     }
 }
 
-
-int ExpectiMax::getBestMove(Board board) {
-    if (genSpwndScores.back().empty()) {
-        return -1;
-    }
-    auto root = genSpwndScores.back().begin();
-    auto bestScore = root->second;
-//    cout << "Best score: " << bestScore << ", gen: " << genSpwndScores.size() - 1 << endl;
-//    cout << "Options: ";
-    int retMove = -1;
-    for (int m = 0; m < 4; ++m) {
-        auto movedBoard = bh->moveLeft(board);
-        if (movedBoard != board) {
-
-            auto movedPBoard = bh->getPrincipalBoard(movedBoard);
-            auto boardScore = genMvdScores[genMvdScores.size() - 1][movedPBoard];
-//            cout << utility->getMoveName(m) << " (" << boardScore << ") ";
-            if (std::abs(genMvdScores[genMvdScores.size() - 1][movedPBoard] - bestScore) < 0.000001 * bestScore) {
-                retMove = m;
+// return list of possible moves, with resulting board positions and scores, in descending order of scores
+vector<MoveBoardScoreEffort> ExpectiMax::getMoves(Board board) {
+    vector<MoveBoardScoreEffort> ret;
+    if (!genSpwndScores.back().empty()) {
+        auto root = genSpwndScores.back().begin();
+        for (int m = 0; m < 4; ++m) {
+            auto movedBoard = bh->moveLeft(board);
+            if (movedBoard != board) {
+                auto movedPBoard = bh->getPrincipalBoard(movedBoard);
+                // rotate back to correct pos
+                for (int i = 0; i < 4 - m; ++i) {
+                    movedBoard = bh->rotateLeft(movedBoard);
+                }
+                auto score = genMvdScores[genMvdScores.size() - 1][movedPBoard];
+                int effort = -1;
+                if (genMvdEffort.size() > genMvdScores.size() - 1) {
+                    effort = genMvdEffort[genMvdScores.size() - 1][movedPBoard];
+                }
+                ret.emplace_back(m, movedBoard, score, effort);
             }
+            board = bh->rotateLeft(board);
         }
-        board = bh->rotateLeft(board);
+        std::sort(ret.begin(), ret.end(), []( const auto& lhs, const auto& rhs )
+        {
+            return lhs.score > rhs.score;
+        });
     }
-//    cout << endl;
-    return retMove;
+    return ret;
 }
 
 void ExpectiMax::printTree(int numGens) {

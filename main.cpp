@@ -208,15 +208,15 @@ runGame(Board startBoard,
 
 
 Board initBoard(Utility* utility) {
-    auto board = Board{0xDCBA9ull << (4 * 11)};
-//    auto board = Board{0};
+    auto board = 0ull;
+//    auto board = Board{0xdcba'9000'0000'0000ull};
 
-    auto pos1 = utility->randInt(12);
-    int pos2 = pos1;
+    auto pos1 = utility->randInt(16);
+    while (BoardHandler::getTileValue(board, pos1) > 0) pos1 = utility->randInt(16);
 
-    while (pos2 == pos1) {
-        pos2 = utility->randInt(12);
-    }
+    auto pos2 = utility->randInt(16);
+    while (BoardHandler::getTileValue(board, pos2) > 0 || pos1 == pos2) pos2 = utility->randInt(16);
+
     for (const auto& p : {pos1, pos2}) {
         if (utility->coinToss(0.9)) {
             board |= 1ull << (p * 4);

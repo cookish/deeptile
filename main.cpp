@@ -155,7 +155,7 @@ runGame(Board startBoard,
 
         if (verbosity > 2) {
             em.evaluteEffort();
-            em.printTree();
+            em.printTree(2);
         }
 //            em.pruneCache(board);
 //            if (gens_now > 5) {cout << "gens:" << gens_now << endl;}

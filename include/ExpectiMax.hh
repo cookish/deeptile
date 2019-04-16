@@ -35,7 +35,7 @@ public:
     unique_ptr<GameStats> getFinalStats() { return std::move(stats); }
 
     int createTree(Board board, int gens);
-    void printTree();
+    void printTree(int numGens);
     void scoreLeaves();
     double evaluateTree();
     void evaluteEffort();

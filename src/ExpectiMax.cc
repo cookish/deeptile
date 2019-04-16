@@ -174,10 +174,14 @@ int ExpectiMax::getBestMove(Board board) {
     return retMove;
 }
 
-void ExpectiMax::printTree() {
+void ExpectiMax::printTree(int numGens) {
     int gens = static_cast<int>(spawnedBoardChildren.size()) - 1;
     cout << std::hex;
+
+    int count = 0;
     for (int currentGen = gens; currentGen > 0; --currentGen) {
+        ++count;
+        if (count > numGens) break;
         cout << "\n-------------------------------------------------------------------------------------------\n";
         cout << "GENERATION " << currentGen;
         cout << "\n-------------------------------------------------------------------------------------------\n";

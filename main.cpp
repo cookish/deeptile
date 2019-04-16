@@ -7,6 +7,7 @@
 #include "GameStats.hh"
 #include "RunStats.hh"
 #include "JsonStats.hh"
+#include "Output.hh"
 
 #include <mutex>
 #include <thread>
@@ -75,7 +76,7 @@ int main() {
         auto total = bh->getBoardTotal(result.finalBoard);
         overallTotal += total;
         cout << "Total: " << total << endl;
-        bh->printBoard(result.finalBoard);
+        cout << Output::formatBoard(result.finalBoard);
     }
     cout << "Average total: " << overallTotal / numGames << endl;
     RunStats runStats(results);
@@ -135,7 +136,7 @@ runGame(Board startBoard,
     auto verbosity = 0;
     if (verbosity > 0) {
         cout << "Starting board:" << endl;
-        bh->printBoard(board);
+        cout << Output::formatBoard(board);
     }
     for (i = 0; true; ++i) {
         int numEvals = 0;
@@ -164,7 +165,7 @@ runGame(Board startBoard,
         if (move < 0) break;
         if (verbosity > 0)  cout << "Moving " << utility->getMoveName(move) << endl;
         score += bh->moveAndScore(board, move);
-        if (verbosity > 1)   bh->printBoard(board);
+        if (verbosity > 2)  cout << Output::formatBoard(board);
         auto possibleTiles = bh->getPossibleSpawns(board);
 
         auto placement = utility2->randInt(static_cast<int>(possibleTiles & 0xFull));

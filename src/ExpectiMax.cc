@@ -3,6 +3,7 @@
 //
 
 #include "ExpectiMax.hh"
+#include "Output.hh"
 
 #include <algorithm>
 #include <iostream>
@@ -184,11 +185,11 @@ void ExpectiMax::printTree() {
         for (const auto &spBoardVal : spawnedBoardChildren[currentGen]) {
             for (int i = 0; i < (gens - currentGen)*4; ++i) cout << " ";
             cout << "Spd Board: ";
-            bh->printHex(spBoardVal.first);
+            cout << Output::formatBoardHex(spBoardVal.first);
             cout << " has the following moves:";
             for (const auto &child : spBoardVal.second) {
                 cout << "  ";
-                bh->printHex(child);
+                cout << Output::formatBoardHex(child);
                 cout << " (" << genMvdScores[currentGen][child] << ")";
                 cout << "[" << genMvdEffort[currentGen][child] << "]";
             }
@@ -198,7 +199,7 @@ void ExpectiMax::printTree() {
         for (const auto &mvBoardVal : movedBoardChildren[currentGen]) {
             for (int i = 0; i < (gens - currentGen)*4; ++i) cout << " ";
             cout << "Mvd Board: ";
-            bh->printHex(mvBoardVal.first);
+            cout << Output::formatBoardHex(mvBoardVal.first);
             cout << " has the following spawns:";
             int i = 0;
             for (const auto &child : mvBoardVal.second) {
@@ -207,7 +208,7 @@ void ExpectiMax::printTree() {
                     for (int i = 0; i < (gens - currentGen)*4; ++i) cout << " ";
                 }
                 printf("  %.3e * ", child.prob);
-                bh->printHex(child.board);
+                cout << Output::formatBoardHex(child.board);
                 cout << " (" << genSpwndScores[currentGen - 1][child.board] << ")";
                 cout << "[" << genSpwndEffort[currentGen - 1][child.board] << "]";
                 ++i;

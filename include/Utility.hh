@@ -15,8 +15,6 @@ public:
     Utility();
     int randInt(int max);
     bool coinToss(double prob);
-    string getMoveName(int move);
-
 
 private:
     std::mt19937 rng;

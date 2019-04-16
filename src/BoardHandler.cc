@@ -6,13 +6,11 @@
 
 #include <algorithm>
 #include <iostream>
-#include <iomanip>
 #include <BoardHandler.hh>
 
 
 using std::cout;
 using std::endl;
-using std::setw;
 
 
 /*
@@ -175,26 +173,3 @@ int BoardHandler::getHighestTile(const Board board) const {
     return max;
 }
 
-void BoardHandler::printHex(const Board board, const int indent) const {
-    cout << std::hex;
-    for (int i = 15; i >= 0; --i) {
-        auto val = getTileValue(board, i);
-        if (val > 0) cout << val; else cout << ".";
-        if (i % 4 == 0 && i > 0) cout << "|";
-    }
-    cout << std::dec;
-}
-
-void BoardHandler::printBoard(const Board board) const {
-    std::cout << std::left;
-    int i = 0;
-    for (const auto &pos : {15, 14, 13, 12, 8, 9, 10, 11, 7, 6, 5, 4, 0, 1, 2, 3}) {
-        auto tile = getTileValue(board, pos);
-        cout << setw(5);
-        if (tile == 0) cout << ".";
-        else cout << (1 << tile);
-        if (i % 4 == 3) cout << "\n";
-        ++i;
-    }
-    cout << endl;
-}

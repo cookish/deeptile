@@ -30,7 +30,6 @@ public:
     Board flip(Board board) const;
     Board moveLeft(Board board) const;
     int moveAndScore(Board &board, int move) const;
-    void printHex(Board board, int indent = 0) const;
     inline int getSpawnFromList(const TileList tile, int index) const {
         return static_cast<int>((tile >> (index*4 + 4)) & 0xF);
     }
@@ -39,7 +38,6 @@ public:
     bool isDead(Board board) const;
     int getBoardTotal(Board board) const;
     int getHighestTile(Board board) const;
-    void printBoard(Board board) const;
 
     static inline int getTileValue(const Board board, const int pos) {
         return static_cast<int>((board >> (pos * 4)) & 0xF);

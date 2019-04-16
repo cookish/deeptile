@@ -177,7 +177,7 @@ runGame(Board startBoard,
         // used to see if board crosses critical point
         if (bh->getHighestTile(board) == 14) {
             passedCritialPoint = true;
-            cout << name << " passed critical point" << endl;
+//            cout << name << " passed critical point" << endl;
 //            break;
         }
     }

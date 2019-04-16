@@ -104,7 +104,6 @@ void runThread(vector<Board> &boards, std::mutex &boardMutex,
             board = boards.back();
             boards.pop_back();
         }
-//        cout << name << " starting on board " << std::hex << board << std::dec << endl;
         auto result = runGame(board, gens, utility, bh, name);
         {
             std::lock_guard<std::mutex> lock(resultMutex);
@@ -143,14 +142,10 @@ runGame(Board startBoard,
 
         int gens_now = gens;
         while (numEvals > 0 && numEvals < 200 && gens_now < 20) {
-//            em.getBestMoveRecurse(board, move, gens_now++, numEvals, 1.);
             numEvals = em.createTree(board, gens_now++);
         }
         em.scoreLeaves();
         score = em.evaluateTree();
-//            Board movedBoard;
-//        bh->printHex(board);
-//        cout << endl;
         auto moveInfo = em.getMoves(board);
         totalEvals += numEvals;
         if (moveInfo.empty()) break;
@@ -160,10 +155,6 @@ runGame(Board startBoard,
             em.evaluateEffort();
             em.printTree(2);
         }
-//            em.pruneCache(board);
-//            if (gens_now > 5) {cout << "gens:" << gens_now << endl;}
-//        }
-
 
         if (verbosity > 1)  {
             cout << Output::formatMoveInfo(board, moveInfo);

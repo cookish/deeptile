@@ -229,6 +229,8 @@ vector<ExpectiMax::BoardProb> ExpectiMax::getPrunedMoves(Board board, double pro
     Board movedBoard;
     vector<ExpectiMax::BoardProb> ret;
 
+    auto baseProb = 0.2;
+
     for (int m = 0; m < 4; ++m) {
         movedBoard = bh->moveLeft(board);
         if (movedBoard != board) {
@@ -288,7 +290,7 @@ vector<ExpectiMax::BoardProb> ExpectiMax::getPrunedMoves(Board board, double pro
     // normalise
     totalScore = 0;
     for (const auto &b : ret) totalScore += b.prob;
-    for (auto &b : ret) b.prob /= totalScore;
+    for (auto &b : ret) b.prob = b.prob / totalScore * (1 - baseProb) + baseProb / ret.size();
 
     return ret;
 }

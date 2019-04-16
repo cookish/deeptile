@@ -34,7 +34,7 @@ private:
 
     std::array<int, 16> neighbourList;
     std::array<int, 16> belowList;
-    double base = 2.3;
+    double base = 0.;
     std::array<double, 16> tileScore;
 };
 

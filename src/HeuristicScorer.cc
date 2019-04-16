@@ -54,7 +54,7 @@ HeuristicScorer::HeuristicScorer(std::shared_ptr<BoardHandler> bh)
     belowList[13] = 10;
     belowList[14] = 9;
     belowList[15] = 8;
-    setBase(2.3);
+    setBase(2.2);
 }
 
 void HeuristicScorer::setBase(double b) {

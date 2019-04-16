@@ -34,13 +34,13 @@ runGame(Board startBoard,
         int gens,
         const shared_ptr<Utility> &utility,
         const shared_ptr<BoardHandler> &bh,
-        string name);
+        int threadNo);
 void runThread(vector<Board> &boards, std::mutex &boardMutex,
                vector<GameStats> &results, std::mutex &resultMutex,
                int gens,
                const std::shared_ptr<Utility> &utility,
                const std::shared_ptr<BoardHandler> &bh,
-               string name);
+               int threadNo);
 
 int main() {
     size_t numGames = 20;
@@ -63,10 +63,9 @@ int main() {
         boards.emplace_back(initBoard(utility.get()));
     }
     for (int i = 0; i < numThreads; ++i) {
-        string name = "Thread " + std::to_string(i);
         threads.emplace_back(runThread, std::ref(boards), std::ref(boardMutex),
                              std::ref(results), std::ref(resultMutex),
-                             generations, std::ref(utility), std::ref(bh), name);
+                             generations, std::ref(utility), std::ref(bh), i);
     }
     for (auto &thread : threads) {
         thread.join();
@@ -92,8 +91,9 @@ void runThread(vector<Board> &boards, std::mutex &boardMutex,
                int gens,
                const std::shared_ptr<Utility> &utility,
                const std::shared_ptr<BoardHandler> &bh,
-               string name)
+               int threadNo)
 {
+    string name = string("Thread ") + std::to_string(threadNo);
     while (true) {
         Board board;
         {
@@ -104,7 +104,7 @@ void runThread(vector<Board> &boards, std::mutex &boardMutex,
             board = boards.back();
             boards.pop_back();
         }
-        auto result = runGame(board, gens, utility, bh, name);
+        auto result = runGame(board, gens, utility, bh, threadNo);
         {
             std::lock_guard<std::mutex> lock(resultMutex);
             results.emplace_back(*std::move(result));
@@ -119,7 +119,8 @@ runGame(Board startBoard,
         int gens,
         const shared_ptr<Utility> &utility,
         const shared_ptr<BoardHandler> &bh,
-        string name) {
+        int threadNo) {
+    string name = string("Thread ") + std::to_string(threadNo);
     bool passedCritialPoint = false;
     auto board = startBoard;
     auto utility2 = std::make_shared<Utility>();

@@ -20,6 +20,7 @@ public:
     double getScoreMovedFast(Board board) override;
 
     double sumZigZag(Board board) const;
+    double sumZigZagPlusTail(Board board) const;
     double sumAlongLongestMonotonicCornerPath(Board board) const;
     double repeatMonotonic(Board board) const;
     void setBase(double b);

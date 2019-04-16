@@ -10,6 +10,7 @@
 #include <iostream>
 #include <math.h>
 #include <cmath>
+#include <Output.hh>
 
 
 using std::cout;
@@ -69,17 +70,34 @@ void HeuristicScorer::initTileScores() {
 }
 
 double HeuristicScorer::getScoreSpawned(Board board) {
-//    cout << "==> Scorer: Evaluating board" << endl;
-//    bh.printHex(board);
+    int option = 3;
 
-//    auto score = sumAlongLongestMonotonicCornerPath(board);
-//    auto score = sumZigZag(board);
-    double fracInZigZag = 0.6;
-//    auto score = (1 - fracInZigZag)*sumAlongLongestMonotonicCornerPath(board) + fracInZigZag*sumZigZag(board);
-//    cout << "==> Evaluated: score " << score << endl;
-    auto score = fracInZigZag * repeatMonotonic(board) + (1 - fracInZigZag)*sumAlongLongestMonotonicCornerPath(board);
-//    auto score = repeatMonotonic(board) ;
-    return score;
+    if (option == 1) { // repeated test along zig zag, plus a fraction along longest monotonic path from a corner
+        double fracInZigZag = 0.9;
+        auto score =
+            fracInZigZag * repeatMonotonic(board) + (1 - fracInZigZag) * sumAlongLongestMonotonicCornerPath(board);
+        return score;
+    }
+    if (option == 2) {
+        double fracInZigZag = 0.9;
+        auto score =
+            fracInZigZag * sumZigZag(board) + (1 - fracInZigZag) * sumAlongLongestMonotonicCornerPath(board);
+        return score;
+    }
+    // zigzag plus tail
+    if (option == 3) {
+        auto score = sumZigZagPlusTail(board);
+        return score;
+    }
+    if (option == 4) {
+        double fracInZigZag = 0.9;
+        auto score =
+            fracInZigZag * sumZigZagPlusTail(board) + (1 - fracInZigZag) * sumAlongLongestMonotonicCornerPath(board);
+        return score;
+    }
+    if (option == 5) {
+        return board;
+    }
 }
 
 double HeuristicScorer::sumZigZag(Board board) const {
@@ -95,6 +113,30 @@ double HeuristicScorer::sumZigZag(Board board) const {
         score += tileScore[val];
         prevValue = val;
     }
+    return score;
+}
+
+double HeuristicScorer::sumZigZagPlusTail(Board board) const {
+    const double tailWeight = 0.5;
+    auto pBoard = bh->getPrincipalBoard(board);
+//    bh->printHex(pBoard);
+    double score = 0;
+    auto prevValue = 0xF;
+    int pos;
+    int val;
+    for (pos=15; pos>=0; --pos) {
+        val = bh->getTileValue(pBoard, pos);
+        if (val > prevValue || val == 0) {
+            break;
+        }
+        score += tileScore[val];
+        prevValue = val;
+    }
+    ++pos;
+    val = bh->getTileValue(pBoard, pos);
+//    cout << Output::formatBoard(board) << endl;
+    score -= tileScore[val];
+    score += sumAlongLongestMonotonicPathRecurse(board, pos, 0xFFFF, 0) * tailWeight;
     return score;
 }
 

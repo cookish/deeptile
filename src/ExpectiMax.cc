@@ -200,7 +200,7 @@ void ExpectiMax::printTree(int numGens) {
                 cout << "  ";
                 cout << Output::formatBoardHex(child);
                 cout << " (" << genMvdScores[currentGen][child] << ")";
-                cout << "[" << genMvdEffort[currentGen][child] << "]";
+                if (genMvdEffort.size() > currentGen) cout << "[" << genMvdEffort[currentGen][child] << "]";
             }
             cout << "\n";
         }
@@ -214,12 +214,12 @@ void ExpectiMax::printTree(int numGens) {
             for (const auto &child : mvBoardVal.second) {
                 if (i % 4 == 0) {
                     cout << "\n";
-                    for (int i = 0; i < (gens - currentGen)*4; ++i) cout << " ";
+                    for (int j = 0; j < (gens - currentGen)*4; ++j) cout << " ";
                 }
                 printf("  %.3e * ", child.prob);
                 cout << Output::formatBoardHex(child.board);
                 cout << " (" << genSpwndScores[currentGen - 1][child.board] << ")";
-                cout << "[" << genSpwndEffort[currentGen - 1][child.board] << "]";
+                if (genSpwndEffort.size() > currentGen) cout << "[" << genSpwndEffort[currentGen - 1][child.board] << "]";
                 ++i;
 
             }

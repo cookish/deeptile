@@ -18,15 +18,11 @@ int ExpectiMax::createTree(Board board, int gens) {
     movedBoardChildren.clear();
     genMvdScores.clear();
     genSpwndScores.clear();
-    genMvdEffort.clear();
-    genSpwndEffort.clear();
     spawnedBoardsToProcess.clear();
     spawnedBoardChildren.resize(gens+1);
     movedBoardChildren.resize(gens+1);
     genMvdScores.resize(gens+1);
     genSpwndScores.resize(gens+1);
-    genMvdEffort.resize(gens+1);
-    genSpwndEffort.resize(gens+1);
 
     auto pBoard = bh->getPrincipalBoard(board);
     Board newBoard;
@@ -122,6 +118,11 @@ double ExpectiMax::evaluateTree() {
 
 void ExpectiMax::evaluateEffort() {
     auto numGens = movedBoardChildren.size() - 1;
+    genMvdEffort.clear();
+    genSpwndEffort.clear();
+    genMvdEffort.resize(numGens+1);
+    genSpwndEffort.resize(numGens+1);
+
     for (int currentGen = 1; currentGen <= numGens; ++currentGen) {
         Board board;
 

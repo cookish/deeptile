@@ -139,10 +139,10 @@ runGame(Board startBoard,
         cout << Output::formatBoard(board);
     }
     for (i = 0; true; ++i) {
-        int numEvals = 0;
+        int numEvals = 1;
 
         int gens_now = gens;
-        while (numEvals < 400 && move >= 0 && gens_now < 20) {
+        while (numEvals > 0 && numEvals < 200 && gens_now < 20) {
 //            em.getBestMoveRecurse(board, move, gens_now++, numEvals, 1.);
             numEvals = em.createTree(board, gens_now++);
         }

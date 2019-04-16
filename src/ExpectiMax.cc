@@ -50,6 +50,7 @@ int ExpectiMax::createTree(Board board, int gens) {
 
         // process moved boards
         auto &mvChildren = movedBoardChildren[currentGen];
+        if (movedBoardsToProcess.empty()) break;
         for (const auto &mvBoardProb : movedBoardsToProcess) {
             auto mvBoard = mvBoardProb.first;
             auto cumulProb = mvBoardProb.second;

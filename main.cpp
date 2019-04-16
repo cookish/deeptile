@@ -154,7 +154,7 @@ runGame(Board startBoard,
         move = em.getBestMove(board);
 
         if (verbosity > 2) {
-            em.evaluteEffort();
+            em.evaluateEffort();
             em.printTree(2);
         }
 //            em.pruneCache(board);

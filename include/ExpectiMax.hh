@@ -38,7 +38,7 @@ public:
     void printTree(int numGens);
     void scoreLeaves();
     double evaluateTree();
-    void evaluteEffort();
+    void evaluateEffort();
     int getBestMove(Board board);
 
 private:

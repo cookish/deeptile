@@ -120,7 +120,7 @@ double ExpectiMax::evaluateTree() {
     return root->second;
 }
 
-void ExpectiMax::evaluteEffort() {
+void ExpectiMax::evaluateEffort() {
     auto numGens = movedBoardChildren.size() - 1;
     for (int currentGen = 1; currentGen <= numGens; ++currentGen) {
         Board board;

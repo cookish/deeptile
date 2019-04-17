@@ -21,6 +21,6 @@ Settings::Settings(const string &iniFileName) {
     num_threads = reader.GetInteger("control", "num_threads", 1);
 
     // expectimax
-    minimum_generations = reader.GetInteger("control", "minimum_generations", 2);
-    minimum_evaluations_per_move = reader.GetInteger("control", "minimum_evaluations_per_move", 200);
+    minimum_generations = reader.GetInteger("expectimax", "minimum_generations", 2);
+    minimum_evaluations_per_move = reader.GetInteger("expectimax", "minimum_evaluations_per_move", 200);
 }

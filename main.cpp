@@ -32,20 +32,19 @@ using std::make_shared;
 Board initBoard(Utility* utility);
 unique_ptr<GameStats>
 runGame(Board startBoard,
-        int gens,
+        const Settings &settings,
         const shared_ptr<Utility> &utility,
         const shared_ptr<BoardHandler> &bh,
         int threadNo);
 void runThread(vector<Board> &boards, std::mutex &boardMutex,
                vector<GameStats> &results, std::mutex &resultMutex,
-               int gens,
+               const Settings &settings,
                const std::shared_ptr<Utility> &utility,
                const std::shared_ptr<BoardHandler> &bh,
                int threadNo);
 
 int main() {
     Settings settings("settings.ini");
-    int generations = 2;
     string gameLogDir = "game_logs";
     string MLDir = "ml";
 
@@ -67,7 +66,7 @@ int main() {
     for (int i = 0; i < settings.num_threads; ++i) {
         threads.emplace_back(runThread, std::ref(boards), std::ref(boardMutex),
                              std::ref(results), std::ref(resultMutex),
-                             generations, std::ref(utility), std::ref(bh), i);
+                             std::ref(settings), std::ref(utility), std::ref(bh), i);
     }
     for (auto &thread : threads) {
         thread.join();
@@ -90,7 +89,7 @@ int main() {
 
 void runThread(vector<Board> &boards, std::mutex &boardMutex,
                vector<GameStats> &results, std::mutex &resultMutex,
-               int gens,
+               const Settings &settings,
                const std::shared_ptr<Utility> &utility,
                const std::shared_ptr<BoardHandler> &bh,
                int threadNo)
@@ -106,7 +105,7 @@ void runThread(vector<Board> &boards, std::mutex &boardMutex,
             board = boards.back();
             boards.pop_back();
         }
-        auto result = runGame(board, gens, utility, bh, threadNo);
+        auto result = runGame(board, settings, utility, bh, threadNo);
         {
             std::lock_guard<std::mutex> lock(resultMutex);
             results.emplace_back(*std::move(result));
@@ -118,7 +117,7 @@ void runThread(vector<Board> &boards, std::mutex &boardMutex,
 
 unique_ptr<GameStats>
 runGame(Board startBoard,
-        int gens,
+        const Settings &settings,
         const shared_ptr<Utility> &utility,
         const shared_ptr<BoardHandler> &bh,
         int threadNo) {
@@ -143,7 +142,7 @@ runGame(Board startBoard,
     for (i = 0; true; ++i) {
         int numEvals = 1;
 
-        int gens_now = gens;
+        int gens_now = settings.minimum_generations;
         while (numEvals > 0 && numEvals < 200 && gens_now < 20) {
             numEvals = em.createTree(board, gens_now++);
         }

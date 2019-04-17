@@ -1,11 +1,27 @@
 //
-// Created by Martin Cook on 2018/11/28.
+// Created by Martin Cook on 2019-04-17.
 //
 
-#ifndef MLTWO_SETTINGS_HH
-#define MLTWO_SETTINGS_HH
+#ifndef DEEPTILE_SETTINGS_HH
+#define DEEPTILE_SETTINGS_HH
 
-#include <cstdint>
+#include <string>
+using std::string;
+
+class Settings
+{
+public:
+    explicit Settings(const string &iniFileName);
+
+    // control
+    int num_threads = 0;
+    int num_games = 0;
+
+    // expectimax
+    int minimum_generations = 0;
+    int minimum_evaluations_per_move = 0;
+
+};
 
 
-#endif //MLTWO_SETTINGS_HH
+#endif //DEEPTILE_SETTINGS_HH

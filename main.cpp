@@ -8,6 +8,7 @@
 #include "RunStats.hh"
 #include "JsonStats.hh"
 #include "Output.hh"
+#include "Settings.hh"
 
 #include <mutex>
 #include <thread>
@@ -43,9 +44,10 @@ void runThread(vector<Board> &boards, std::mutex &boardMutex,
                int threadNo);
 
 int main() {
-    size_t numGames = 20;
-    size_t numThreads = 5;
-    int generations = 4;
+    Settings settings("settings.ini");
+    int generations = 2;
+    string gameLogDir = "game_logs";
+    string MLDir = "ml";
 
     auto bh = make_shared<BoardHandler>(make_unique<RowHandler>());
     auto utility = make_shared<Utility>();
@@ -56,13 +58,13 @@ int main() {
     std::vector<std::thread> threads;
     std::vector<Board> boards;
     std::vector<GameStats> results;
-    threads.reserve(numGames);
-    boards.reserve(numGames);
-    results.reserve(numGames);
-    for (int i = 0; i < numGames; ++i) {
+    threads.reserve(settings.num_games);
+    boards.reserve(settings.num_games);
+    results.reserve(settings.num_games);
+    for (int i = 0; i < settings.num_games; ++i) {
         boards.emplace_back(initBoard(utility.get()));
     }
-    for (int i = 0; i < numThreads; ++i) {
+    for (int i = 0; i < settings.num_threads; ++i) {
         threads.emplace_back(runThread, std::ref(boards), std::ref(boardMutex),
                              std::ref(results), std::ref(resultMutex),
                              generations, std::ref(utility), std::ref(bh), i);
@@ -77,7 +79,7 @@ int main() {
         cout << "Total: " << total << endl;
         cout << Output::formatBoard(result.finalBoard);
     }
-    cout << "Average total: " << overallTotal / numGames << endl;
+    cout << "Average total: " << overallTotal / settings.num_games << endl;
     RunStats runStats(results);
     auto js = JsonStats::create(runStats);
     std::cout << js.dump(4) << std::endl;

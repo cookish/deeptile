@@ -26,6 +26,9 @@ public:
     double spawned_board_prob_thresh_1 = 0.;
     double spawned_board_prob_thresh_2 = 0.;
 
+    // heuristic
+    int algorithm_option = -1;
+
 };
 
 

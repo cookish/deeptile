@@ -124,7 +124,7 @@ runGame(Board startBoard,
     bool passedCritialPoint = false;
     auto board = startBoard;
     auto utility2 = std::make_shared<Utility>();
-    ExpectiMax em(bh, utility2, make_unique<HeuristicScorer>(bh), make_unique<GameStats>(), &settings);
+    ExpectiMax em(bh, utility2, make_unique<HeuristicScorer>(bh, &settings), make_unique<GameStats>(), &settings);
     em.scoreForDeath = 0;
     int move = 0;
     double score = 0;

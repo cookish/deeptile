@@ -4,6 +4,7 @@
 
 #include "HeuristicScorer.hh"
 #include "BoardHandler.hh"
+#include "Settings.hh"
 
 #include <vector>
 #include <algorithm>
@@ -18,8 +19,8 @@ using std::endl;
 
 using std::vector;
 
-HeuristicScorer::HeuristicScorer(std::shared_ptr<BoardHandler> bh)
-    : bh(std::move(bh))
+HeuristicScorer::HeuristicScorer(std::shared_ptr<BoardHandler> bh, const Settings* settings)
+    : bh(std::move(bh)), settings(settings)
 {
     neighbourList[0] =  0x17;
     neighbourList[1] =  0x260;
@@ -70,7 +71,7 @@ void HeuristicScorer::initTileScores() {
 }
 
 double HeuristicScorer::getScoreSpawned(Board board) {
-    int option = 3;
+    int option = settings->algorithm_option;
 
     if (option == 1) { // repeated test along zig zag, plus a fraction along longest monotonic path from a corner
         double fracInZigZag = 0.9;

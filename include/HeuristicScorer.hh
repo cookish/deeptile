@@ -10,10 +10,11 @@
 #include <vector>
 using std::vector;
 
+class Settings;
 class HeuristicScorer : public ScorerInterface
 {
 public:
-    explicit HeuristicScorer(std::shared_ptr<BoardHandler> bh);
+    HeuristicScorer(std::shared_ptr<BoardHandler> bh, const Settings* settings);
     double getScoreSpawned(Board board) override;
     double getScoreMoved(Board board) override { return getScoreSpawned(board); }
     // the board itself is a reasonable score...
@@ -31,6 +32,7 @@ private:
     double sumAlongLongestMonotonicPath(Board board) const;
     double sumAlongLongestMonotonicPathRecurse(Board board, int currentPos, int parentVal, int indent) const;
     std::shared_ptr<BoardHandler> bh;
+    const Settings* settings;
 
     std::array<int, 16> neighbourList;
     std::array<int, 16> belowList;

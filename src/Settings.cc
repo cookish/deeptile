@@ -32,4 +32,6 @@ Settings::Settings(const string &iniFileName) {
     spawned_board_prob_thresh_2 = reader.GetReal("expectimax", "spawned_board_prob_thresh_2",
         spawned_board_prob_thresh_2);
 
+    //heuristic
+    algorithm_option = reader.GetInteger("heuristic", "algorithm_option", algorithm_option);
 }

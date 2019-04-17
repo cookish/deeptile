@@ -16,7 +16,6 @@ set(SOURCES
         src/HeuristicScorer.cc
         src/ExpectiMax.cc
         src/Utility.cc
-        src/ScoreCache.cc
         src/GameStats.cc
         src/RunStats.cc
         src/JsonStats.cc

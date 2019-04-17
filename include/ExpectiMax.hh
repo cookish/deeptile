@@ -16,6 +16,7 @@ using std::array;
 using std::unique_ptr;
 using std::shared_ptr;
 
+class Settings;
 struct MoveBoardScoreEffort {
     int move;
     Board board;
@@ -32,11 +33,13 @@ public:
     ExpectiMax(shared_ptr<BoardHandler> bh,
                    shared_ptr<Utility> utility,
                    unique_ptr<ScorerInterface> scorer,
-                   unique_ptr<GameStats> stats)
+                   unique_ptr<GameStats> stats,
+                   const Settings* settings)
         : bh(std::move(bh)),
           utility(std::move(utility)),
           scorer(std::move(scorer)),
-          stats(std::move(stats))
+          stats(std::move(stats)),
+          settings(settings)
     {;}
     double scoreForDeath = 0;
     unique_ptr<GameStats> getFinalStats() { return std::move(stats); }
@@ -62,6 +65,7 @@ private:
     shared_ptr<Utility> utility;
     unique_ptr<ScorerInterface> scorer;
     unique_ptr<GameStats> stats;
+    const Settings* settings;
 
     vector<BoardProb> getPrunedMoves(Board board, double prob, int gens) const;
     unordered_map<Board, double> getPrunedSpawns(Board board, const double prob) const;

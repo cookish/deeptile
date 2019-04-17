@@ -9,6 +9,7 @@
 #include <iostream>
 #include <ExpectiMax.hh>
 #include <iomanip>
+#include <Settings.hh>
 
 using std::cout;
 using std::endl;
@@ -257,13 +258,13 @@ vector<ExpectiMax::BoardProb> ExpectiMax::getPrunedMoves(Board board, double pro
 
     int optionLimit;
     double probThresh;
-    if (prob >= 1./100.) {
+    if (prob >= settings->moved_board_prob_thresh_1) {
         optionLimit = 4;
         probThresh = 0.;
-    } else if (prob >= 1./4000) {
+    } else if (prob >= settings->moved_board_prob_thresh_2) {
         optionLimit = 4;
         probThresh = 0.1;
-    } else if (prob > 1./150000) {
+    } else if (prob > settings->moved_board_prob_thresh_3) {
         optionLimit = 3;
         probThresh = 0.2;
     } else {
@@ -307,7 +308,7 @@ unordered_map<Board, double> ExpectiMax::getPrunedSpawns(const Board board, cons
 
     Board spBoard;
     int numSpawns = static_cast<int>(possibleSpawns) & 0xF;
-    if (prob >= 1./400.) {
+    if (prob >= settings->spawned_board_prob_thresh_1) {
         for (int i = 0; i < numSpawns; ++i) {
             auto pos = bh->getSpawnFromList(possibleSpawns, i);
             spBoard = bh->getPrincipalBoard(board | (static_cast<uint64_t>(1) << (4 * pos)));
@@ -315,7 +316,7 @@ unordered_map<Board, double> ExpectiMax::getPrunedSpawns(const Board board, cons
             spBoard = bh->getPrincipalBoard(board | (static_cast<uint64_t>(2) << (4 * pos)));
             ret[spBoard] += 0.1 / numSpawns;
         }
-    } else if (prob >= 1./4000.) {
+    } else if (prob >= settings->spawned_board_prob_thresh_2) {
         for (int i = 0; i < numSpawns; ++i) {
             auto pos = bh->getSpawnFromList(possibleSpawns, i);
             spBoard = bh->getPrincipalBoard(board | (static_cast<uint64_t>(1) << (4 * pos)));

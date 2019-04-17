@@ -20,6 +20,11 @@ public:
     // expectimax
     int minimum_generations = 0;
     int minimum_evaluations_per_move = 0;
+    double moved_board_prob_thresh_1 = 0.;
+    double moved_board_prob_thresh_2 = 0.;
+    double moved_board_prob_thresh_3 = 0.;
+    double spawned_board_prob_thresh_1 = 0.;
+    double spawned_board_prob_thresh_2 = 0.;
 
 };
 

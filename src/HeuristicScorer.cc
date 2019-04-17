@@ -98,6 +98,7 @@ double HeuristicScorer::getScoreSpawned(Board board) {
     if (option == 5) {
         return board;
     }
+    return 0.;
 }
 
 double HeuristicScorer::sumZigZag(Board board) const {

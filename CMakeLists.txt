@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.0)
 project(deeptile)
 
 include_directories(include)
+include_directories(externals/inih)
+include_directories(externals/inih/cpp)
+add_subdirectory(externals)
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -23,5 +26,6 @@ set(SOURCES
 add_library(deeptile_lib ${SOURCES})
 add_executable(deeptile main.cpp)
 target_link_libraries(deeptile deeptile_lib ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(deeptile inih_lib)
 
 add_subdirectory(tests)

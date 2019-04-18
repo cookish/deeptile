@@ -28,6 +28,7 @@ public:
 
     // heuristic
     int algorithm_option = -1;
+    double score_for_death = 0.;
 
 };
 

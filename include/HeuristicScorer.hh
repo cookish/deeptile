@@ -15,6 +15,7 @@ class HeuristicScorer : public ScorerInterface
 {
 public:
     HeuristicScorer(std::shared_ptr<BoardHandler> bh, const Settings* settings);
+    void scoreMapOfBoards(std::unordered_map<Board, double> &map) override;
     double getScoreSpawned(Board board) override;
     double getScoreMoved(Board board) override { return getScoreSpawned(board); }
     // the board itself is a reasonable score...

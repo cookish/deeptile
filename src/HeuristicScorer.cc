@@ -70,6 +70,17 @@ void HeuristicScorer::initTileScores() {
     }
 }
 
+void HeuristicScorer::scoreMapOfBoards(unordered_map<Board, double> &map) {
+    for (auto &boardProb: map) {
+        if (bh->isDead(boardProb.first)) {
+            boardProb.second = settings->score_for_death;
+        } else {
+            boardProb.second = getScoreSpawned(boardProb.first);
+        }
+    }
+}
+
+
 double HeuristicScorer::getScoreSpawned(Board board) {
     int option = settings->algorithm_option;
 

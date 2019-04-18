@@ -74,13 +74,7 @@ int ExpectiMax::createTree(Board board, int gens) {
 }
 
 void ExpectiMax::scoreLeaves() {
-    for (auto &leaf: genSpwndScores[0]) {
-        if (bh->isDead(leaf.first)) {
-            leaf.second = scoreForDeath;
-        } else {
-            leaf.second = scorer->getScoreSpawned(leaf.first);
-        }
-    }
+    scorer->scoreMapOfBoards(genSpwndScores[0]);
 }
 
 double ExpectiMax::evaluateTree() {

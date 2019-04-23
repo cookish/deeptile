@@ -9,6 +9,7 @@
 #include "Utility.hh"
 #include "ScorerInterface.hh"
 #include "GameStats.hh"
+#include "DataLogger.hh"
 
 #include <array>
 using std::array;
@@ -31,14 +32,16 @@ class ExpectiMax
 {
 public:
     ExpectiMax(shared_ptr<BoardHandler> bh,
-                   shared_ptr<Utility> utility,
-                   unique_ptr<ScorerInterface> scorer,
-                   unique_ptr<GameStats> stats,
-                   const Settings* settings)
+               shared_ptr<Utility> utility,
+               unique_ptr<ScorerInterface> scorer,
+               unique_ptr<GameStats> stats,
+               shared_ptr<DataLogger> dataLogger,
+               const Settings *settings)
         : bh(std::move(bh)),
           utility(std::move(utility)),
           scorer(std::move(scorer)),
           stats(std::move(stats)),
+          dataLogger(std::move(dataLogger)),
           settings(settings)
     {;}
     double scoreForDeath = 0;
@@ -65,6 +68,7 @@ private:
     shared_ptr<Utility> utility;
     unique_ptr<ScorerInterface> scorer;
     unique_ptr<GameStats> stats;
+    shared_ptr<DataLogger> dataLogger;
     const Settings* settings;
 
     vector<BoardProb> getPrunedMoves(Board board, double prob, int gens) const;

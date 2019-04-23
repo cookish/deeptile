@@ -109,7 +109,7 @@ void runThread(vector<Board> &boards, std::mutex &boardMutex,
             std::lock_guard<std::mutex> lock(resultMutex);
             results.emplace_back(*std::move(result));
             cout << name << " completed game " << results.size()
-            << ", total: " << bh->getBoardTotal(result->finalBoard) << endl;
+                 << ", total: " << bh->getBoardTotal(result->finalBoard) << endl;
         }
     }
 }
@@ -121,10 +121,17 @@ runGame(Board startBoard,
         const shared_ptr<BoardHandler> &bh,
         int threadNo) {
     string name = string("Thread ") + std::to_string(threadNo);
+    string dirname = string("thread") + std::to_string(threadNo);
     bool passedCritialPoint = false;
     auto board = startBoard;
     auto utility2 = std::make_shared<Utility>();
-    ExpectiMax em(bh, utility2, make_unique<HeuristicScorer>(bh, &settings), make_unique<GameStats>(), &settings);
+    auto dataLogger = std::make_shared<DataLogger>();
+    ExpectiMax em(bh,
+                  utility2,
+                  make_unique<HeuristicScorer>(bh, &settings),
+                  make_unique<GameStats>(),
+                  dataLogger,
+                  &settings);
     em.scoreForDeath = 0;
     int move = 0;
     double score = 0;
@@ -139,6 +146,7 @@ runGame(Board startBoard,
         cout << Output::formatBoard(board);
     }
     for (i = 0; true; ++i) {
+        dataLogger->logMove(bh->getPrincipalBoard(board));
         int numEvals = 1;
 
         int gens_now = settings.minimum_generations;
@@ -182,8 +190,14 @@ runGame(Board startBoard,
 //            break;
         }
     }
+    dataLogger->writeToFiles(
+        dirname + "/dead_boards.dat",
+        dirname + "/calculated_boards.dat",
+        dirname + "/calculated_scores.dat",
+        dirname + "/moves.dat"
+    );
     auto timeTaken = std::chrono::duration_cast<std::chrono::duration<double> >
-         (steady_clock::now() - start).count();
+        (steady_clock::now() - start).count();
     //    auto timeTaken = (clock() - start) / (double) CLOCKS_PER_SEC;
 //    cout << name << " >> " << " move: " << i << ", score: " << score << endl;
     auto stats = em.getFinalStats();

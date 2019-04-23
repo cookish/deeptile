@@ -21,6 +21,7 @@ set(SOURCES
         src/JsonStats.cc
         src/Output.cc
         src/Settings.cc
+        src/DataLogger.cc
         )
 
 add_library(deeptile_lib ${SOURCES})

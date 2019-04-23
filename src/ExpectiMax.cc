@@ -41,6 +41,9 @@ int ExpectiMax::createTree(Board board, int gens) {
 
 
             auto moveOptions = getPrunedMoves(spBoard, cumulProb, currentGen);
+            if (moveOptions.empty()) {
+                dataLogger->logDeadBoard(spBoard);
+            }
             for (const auto &moveOption : moveOptions) {
                 newBoard = bh->getPrincipalBoard(moveOption.board);
                 spChildren[spBoard].emplace_back(newBoard);
@@ -102,6 +105,7 @@ double ExpectiMax::evaluateTree() {
                 maxScore = std::max(score, maxScore);
             }
             genSpwndScores[currentGen][board] = maxScore;
+            dataLogger->logCalculatedBoard(board, maxScore);
         }
     }
     // return the score of the tree root (the only spawned board at the highest level)

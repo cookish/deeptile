@@ -12,14 +12,13 @@
 #include <vector>
 using std::vector;
 
+using Board = uint64_t;
+using TileList = uint64_t;
+
 struct BoardAndMove {
     Board board;
     int move;
 };
-
-
-using Board = uint64_t;
-using TileList = uint64_t;
 
 class BoardHandler
 {

@@ -24,9 +24,15 @@ set(SOURCES
         src/DataLogger.cc
         )
 
+if(NOT Boost_FOUND)
+    FIND_PACKAGE( Boost COMPONENTS filesystem REQUIRED )
+endif()
+include_directories(${Boost_INCLUDE_DIRS})
+
 add_library(deeptile_lib ${SOURCES})
 add_executable(deeptile main.cpp)
 target_link_libraries(deeptile deeptile_lib ${CMAKE_THREAD_LIBS_INIT})
-target_link_libraries(deeptile inih_lib)
+target_link_libraries(deeptile inih_lib ${Boost_LIBRARIES})
+
 
 add_subdirectory(tests)

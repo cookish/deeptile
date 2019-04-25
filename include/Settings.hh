@@ -13,6 +13,11 @@ class Settings
 public:
     explicit Settings(const string &iniFileName);
 
+    //filesystem
+    string gameLogDir = "game_logs";
+    string prevGameLogDir = "previous_game_logs";
+
+
     // control
     int num_threads = 0;
     int num_games = 0;

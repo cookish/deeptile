@@ -9,6 +9,7 @@
 #include "Output.hh"
 #include "Settings.hh"
 
+#include <boost/filesystem.hpp>
 #include <mutex>
 #include <thread>
 #include <iomanip>
@@ -34,7 +35,8 @@ runGame(Board startBoard,
         const Settings &settings,
         const shared_ptr<Utility> &utility,
         const shared_ptr<BoardHandler> &bh,
-        int threadNo);
+        int threadNo,
+        int gameNo);
 void runThread(vector<Board> &boards, std::mutex &boardMutex,
                vector<GameStats> &results, std::mutex &resultMutex,
                const Settings &settings,
@@ -44,8 +46,10 @@ void runThread(vector<Board> &boards, std::mutex &boardMutex,
 
 int main() {
     Settings settings("settings.ini");
-    string gameLogDir = "game_logs";
-    string MLDir = "ml";
+    boost::filesystem::remove_all(settings.prevGameLogDir);
+    if (boost::filesystem::exists(settings.gameLogDir)) {
+        boost::filesystem::rename(settings.gameLogDir, settings.prevGameLogDir);
+    }
 
     auto bh = make_shared<BoardHandler>(make_unique<RowHandler>());
     auto utility = make_shared<Utility>();
@@ -59,8 +63,11 @@ int main() {
     threads.reserve(settings.num_games);
     boards.reserve(settings.num_games);
     results.reserve(settings.num_games);
-    for (int i = 0; i < settings.num_games; ++i) {
-        boards.emplace_back(initBoard(utility.get()));
+    {
+        std::lock_guard<std::mutex> lock(boardMutex);
+        for (int i = 0; i < settings.num_games; ++i) {
+            boards.emplace_back(initBoard(utility.get()));
+        }
     }
     for (int i = 0; i < settings.num_threads; ++i) {
         threads.emplace_back(runThread, std::ref(boards), std::ref(boardMutex),
@@ -95,20 +102,22 @@ void runThread(vector<Board> &boards, std::mutex &boardMutex,
 {
     string name = string("Thread ") + std::to_string(threadNo);
     while (true) {
+        int gameNumber;
         Board board;
         {
             std::lock_guard<std::mutex> lock(boardMutex);
             if (boards.empty()) {
                 return;
             }
+            gameNumber = settings.num_games - boards.size();
             board = boards.back();
             boards.pop_back();
         }
-        auto result = runGame(board, settings, utility, bh, threadNo);
+        auto result = runGame(board, settings, utility, bh, threadNo, gameNumber);
         {
             std::lock_guard<std::mutex> lock(resultMutex);
             results.emplace_back(*std::move(result));
-            cout << name << " completed game " << results.size()
+            cout << name << " completed game " << gameNumber
                  << ", total: " << bh->getBoardTotal(result->finalBoard) << endl;
         }
     }
@@ -119,9 +128,13 @@ runGame(Board startBoard,
         const Settings &settings,
         const shared_ptr<Utility> &utility,
         const shared_ptr<BoardHandler> &bh,
-        int threadNo) {
+        int threadNo,
+        int gameNo)
+{
     string name = string("Thread ") + std::to_string(threadNo);
-    string dirname = string("thread") + std::to_string(threadNo);
+    string dirname = settings.gameLogDir + "/game" + std::to_string(gameNo);
+    boost::filesystem::create_directories(dirname);
+
     bool passedCritialPoint = false;
     auto board = startBoard;
     auto utility2 = std::make_shared<Utility>();

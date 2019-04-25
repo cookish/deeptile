@@ -134,6 +134,10 @@ runGame(Board startBoard,
     string name = string("Thread ") + std::to_string(threadNo);
     string dirname = settings.gameLogDir + "/game" + std::to_string(gameNo);
     boost::filesystem::create_directories(dirname);
+    auto gameLogFile = std::ofstream((dirname + "/game_log.txt").c_str(), std::ios::out);
+    if (!gameLogFile) {
+        cout << "Warning: could not make file:" << dirname + "/game_log.txt" << endl;
+    }
 
     bool passedCritialPoint = false;
     auto board = startBoard;
@@ -178,6 +182,7 @@ runGame(Board startBoard,
             em.printTree(2);
         }
 
+        gameLogFile << Output::formatMoveInfo(board, moveInfo) << "\n";
         if (verbosity > 1)  {
             cout << Output::formatMoveInfo(board, moveInfo);
             cout << endl;

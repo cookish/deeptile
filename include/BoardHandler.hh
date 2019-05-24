@@ -11,6 +11,7 @@
 #include <cstdint>
 #include <vector>
 using std::vector;
+#include <string>
 
 using Board = uint64_t;
 using TileList = uint64_t;
@@ -44,6 +45,7 @@ public:
     static inline int getExpFromValue(const int value) {
         return (value == 0) ? 0 : (1 << value);
     }
+    static std::string toJson(const Board board);
 
 private:
     std::unique_ptr<RowHandler> rowHandler;

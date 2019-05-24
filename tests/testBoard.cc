@@ -41,3 +41,8 @@ TEST_CASE( "Boards are moved left", "[boardHandler]" ) {
     auto board = Board{0x1102400003038888};
     REQUIRE(b.moveLeft(board) == 0x2200000440000099);
 }
+
+TEST_CASE ( "Boards are converted to JSON strings", "[boardHandler]" ) {
+    auto str = BoardHandler::toJson(Board{0xfedc'ba98'7654'3210});
+    REQUIRE(str == "[[15],[14],[13],[12]][[8],[9],[10],[11]][[6],[5],[4],[3]][[0],[1],[2],[3]]");
+}

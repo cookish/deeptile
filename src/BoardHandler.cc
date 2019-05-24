@@ -7,7 +7,9 @@
 #include <algorithm>
 #include <iostream>
 #include <BoardHandler.hh>
-
+#include <sstream>
+#include <array>
+using std::array;
 
 using std::cout;
 using std::endl;
@@ -171,5 +173,30 @@ int BoardHandler::getHighestTile(const Board board) const {
         }
     }
     return max;
+}
+
+// hand code this, probably faster than using json library, don't need to add to project dependencies
+std::string BoardHandler::toJson(Board board) {
+    auto positions = array<int, 16>{15, 14, 13, 12, 8, 9, 10, 11, 6, 5, 4, 3, 0, 1, 2, 3};
+    Board tileMask = 0xFull;
+    auto boardArr = array<array<int, 4>, 4>{};
+    for (int outer = 0; outer < 4; ++outer) {
+        for (int inner = 0; inner < 4; ++inner) {
+            auto index = outer * 4 + inner;
+            boardArr[outer][inner] = (board >> (positions[index] * 4)) & tileMask;
+        }
+    }
+    std::stringstream ss;
+    for (const auto &outer : boardArr) {
+        ss << "[";
+        std::string separator;
+        for (const auto &inner : outer) {
+            ss << separator << "[" << inner << "]";
+            separator = ",";
+        }
+        ss << "]";
+    }
+    auto str = ss.str();
+    return str;
 }
 

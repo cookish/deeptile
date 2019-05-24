@@ -1,0 +1,21 @@
+version: '3.2'
+
+# this should be a generalisation of:
+# docker run -p 8501:8501 \
+# --mount type=bind,source=/Users/martin/working/deeptile/current/models/test,target=/models/serving_default \
+# -e MODEL_NAME=serving_default \
+# -t \
+# tensorflow/serving
+
+services:
+  tensorflow_serving:
+    image: tensorflow/serving
+    ports:
+      - "8501-8511:8501"
+    volumes:
+      - type: bind
+        source: /Users/martin/working/deeptile/current/models/test
+        target: /models/serving_default
+    environment:
+      - MODEL_NAME=serving_default
+    tty: true

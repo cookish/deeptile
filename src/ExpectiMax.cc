@@ -105,7 +105,7 @@ double ExpectiMax::evaluateTree() {
                 maxScore = std::max(score, maxScore);
             }
             genSpwndScores[currentGen][board] = maxScore;
-            dataLogger->logCalculatedBoard(board, maxScore);
+            dataLogger->logCalculatedBoard(board, maxScore, currentGen);
         }
     }
     // return the score of the tree root (the only spawned board at the highest level)

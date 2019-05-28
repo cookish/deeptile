@@ -17,9 +17,9 @@ void DataLogger::logDeadBoard(const Board board) {
 }
 
 // Note: does not convert to principal board
-void DataLogger::logCalculatedBoard(Board board, double score) {
+void DataLogger::logCalculatedBoard(Board board, double score, int gensAboveLeaf) {
     calculatedBoards.emplace_back(board);
-    calculatedScores.emplace_back(score);
+    calculatedScores.emplace_back(score + gensAboveLeaf);
 }
 
 // Note: does not convert to principal board

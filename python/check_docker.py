@@ -5,7 +5,7 @@ import json
 import include.board_utilities as board_utilities
 
 host = 'localhost'
-port = '8501'
+port = '8503'
 
 test_boards = np.empty(shape=1000, dtype="uint64")
 for i in range(1000):

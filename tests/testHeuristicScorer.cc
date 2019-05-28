@@ -15,7 +15,7 @@ using std::pow;
 
 
 TEST_CASE(" Score calculated", "[heuristicScorer]" ) {
-    HeuristicScorer h(std::make_shared<BoardHandler>(std::make_unique<RowHandler>()));
+    HeuristicScorer h(std::make_shared<BoardHandler>(std::make_unique<RowHandler>()), nullptr);
     h.setBase(2);
     SECTION("Sum zig zag") {
         REQUIRE(h.sumZigZag(0x0000111232112235) == 32+8+4+4+2+2);

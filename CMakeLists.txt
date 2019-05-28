@@ -32,11 +32,12 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 find_package(pybind11 REQUIRED)
 include_directories(${PYTHON_INCLUDE_DIRS})
+
 find_package(CURL REQUIRED)
+
 add_library(deeptile_lib ${SOURCES})
 add_executable(deeptile main.cpp)
-target_link_libraries(deeptile deeptile_lib ${CMAKE_THREAD_LIBS_INIT})
-target_link_libraries(deeptile inih_lib ${Boost_LIBRARIES})
+target_link_libraries(deeptile PRIVATE pybind11::embed)
 target_link_libraries(deeptile PRIVATE deeptile_lib ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(deeptile PRIVATE inih_lib ${Boost_LIBRARIES})
 target_link_libraries(deeptile PRIVATE ${CURL_LIBRARIES})

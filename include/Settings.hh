@@ -35,6 +35,9 @@ public:
     int algorithm_option = -1;
     double score_for_death = 0.;
 
+    // docker
+    int docker_start_port = -1;
+
 };
 
 

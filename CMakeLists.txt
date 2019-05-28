@@ -41,6 +41,9 @@ target_link_libraries(deeptile PRIVATE deeptile_lib ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(deeptile PRIVATE inih_lib ${Boost_LIBRARIES})
 target_link_libraries(deeptile PRIVATE ${CURL_LIBRARIES})
 
+add_executable(testDocker testDocker.cc)
+target_link_libraries(testDocker ${CURL_LIBRARIES})
+
 pybind11_add_module(heuristicMod  heuristicMod.cc)
 target_link_libraries(heuristicMod PRIVATE pybind11::module deeptile_lib inih_lib)
 #install(TARGETS heuristicMod DESTINATION ...?)

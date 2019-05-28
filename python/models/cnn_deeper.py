@@ -18,7 +18,7 @@ def get_model():
     model.add(Dense(1, activation='linear', name="finalout"))
 
     sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
-    model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'], )
+    model.compile(loss='mean_absolute_error', optimizer='adam', metrics=["mean_squared_error"], )
     input_tensor = model.inputs[0]
     output_tensor = model.outputs[0]
     print("Inputs: "+str(input_tensor))

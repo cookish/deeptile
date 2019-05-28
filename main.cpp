@@ -3,6 +3,7 @@
 #include "ExpectiMax.hh"
 #include "Utility.hh"
 #include "HeuristicScorer.hh"
+#include "MLScorer.hh"
 #include "GameStats.hh"
 #include "RunStats.hh"
 #include "JsonStats.hh"
@@ -37,8 +38,10 @@ runGame(Board startBoard,
         const shared_ptr<BoardHandler> &bh,
         int threadNo,
         int gameNo);
-void runThread(vector<Board> &boards, std::mutex &boardMutex,
-               vector<GameStats> &results, std::mutex &resultMutex,
+void runThread(vector<Board> &boards,
+               std::mutex &boardMutex,
+               vector<GameStats> &results,
+               std::mutex &resultMutex,
                const Settings &settings,
                const std::shared_ptr<Utility> &utility,
                const std::shared_ptr<BoardHandler> &bh,
@@ -93,8 +96,10 @@ int main() {
     return 0;
 }
 
-void runThread(vector<Board> &boards, std::mutex &boardMutex,
-               vector<GameStats> &results, std::mutex &resultMutex,
+void runThread(vector<Board> &boards,
+               std::mutex &boardMutex,
+               vector<GameStats> &results,
+               std::mutex &resultMutex,
                const Settings &settings,
                const std::shared_ptr<Utility> &utility,
                const std::shared_ptr<BoardHandler> &bh,
@@ -146,6 +151,7 @@ runGame(Board startBoard,
     ExpectiMax em(bh,
                   utility2,
                   make_unique<HeuristicScorer>(bh, &settings),
+//                  make_unique<MLScorer>(bh, &settings, settings.docker_start_port + threadNo),
                   make_unique<GameStats>(),
                   dataLogger,
                   &settings);
@@ -158,6 +164,9 @@ runGame(Board startBoard,
 //    auto start = clock();
     int totalEvals = 0;
     auto verbosity = 1;
+    if (verbosity > 0) {
+        cout << "Starting game:" << gameNo << endl;
+    }
     if (verbosity > 1) {
         cout << "Starting board:" << endl;
         cout << Output::formatBoard(board);
@@ -214,6 +223,9 @@ runGame(Board startBoard,
         dirname + "/calculated_scores.dat",
         dirname + "/moves.dat"
     );
+    if (verbosity > 0) {
+        cout << "Finished game:" << gameNo << endl;
+    }
     auto timeTaken = std::chrono::duration_cast<std::chrono::duration<double> >
         (steady_clock::now() - start).count();
     //    auto timeTaken = (clock() - start) / (double) CLOCKS_PER_SEC;

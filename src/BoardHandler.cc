@@ -10,6 +10,8 @@
 #include <sstream>
 #include <array>
 using std::array;
+#include <string>
+using std::string;
 
 using std::cout;
 using std::endl;
@@ -176,7 +178,7 @@ int BoardHandler::getHighestTile(const Board board) const {
 }
 
 // hand code this, probably faster than using json library, don't need to add to project dependencies
-std::string BoardHandler::toJson(Board board) {
+string BoardHandler::toJson(Board board) {
     auto positions = array<int, 16>{15, 14, 13, 12, 8, 9, 10, 11, 6, 5, 4, 3, 0, 1, 2, 3};
     Board tileMask = 0xFull;
     auto boardArr = array<array<int, 4>, 4>{};
@@ -187,12 +189,14 @@ std::string BoardHandler::toJson(Board board) {
         }
     }
     std::stringstream ss;
+    string outerSeparator{};
     for (const auto &outer : boardArr) {
-        ss << "[";
-        std::string separator;
+        ss << outerSeparator  << "[";
+        outerSeparator = ",";
+        std::string innerSeparator{};
         for (const auto &inner : outer) {
-            ss << separator << "[" << inner << "]";
-            separator = ",";
+            ss << innerSeparator << "[" << inner << "]";
+            innerSeparator = ",";
         }
         ss << "]";
     }

@@ -17,7 +17,7 @@ class DataLogger
 {
 public:
     void logDeadBoard(Board board);
-    void logCalculatedBoard(Board board, double score);
+    void logCalculatedBoard(Board board, double score, int gensAboveLeaf);
     void logMove(Board board);
     void writeToFiles(const string &deadFile,
                       const string &calculatedBoardFile,

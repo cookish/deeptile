@@ -35,4 +35,7 @@ Settings::Settings(const string &iniFileName) {
     //heuristic
     algorithm_option = reader.GetInteger("heuristic", "algorithm_option", algorithm_option);
     score_for_death = reader.GetReal("heuristic", "score_for_death", score_for_death);
+
+    //docker
+    docker_start_port = reader.GetInteger("docker", "start_port", docker_start_port);
 }

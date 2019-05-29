@@ -3,13 +3,17 @@ import sys, os
 sys.path.append(os.getcwd())
 # sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/../cmake-build-debug/')
 from python.include import board_utilities
+from python.include import model_saver
 from python.models import cnn_deeper
 import heuristicMod
 import numpy as np
 from sklearn.model_selection import train_test_split
 import math
+import configparser
 
-num_games = 16
+config = configparser.ConfigParser()
+config.read('settings.ini')
+num_games = config.getint('control', 'num_games')
 moves_u64 = np.array([], "uint64")
 moves_left_scores = np.array([], "uint64")
 
@@ -53,6 +57,8 @@ if len(moves_shaped > 0):
         shuffle=True,
         validation_data=(x_valid, y_valid)
     )
+
+model_saver.save_docker(model, "models/testNN",  0)
 
 moves = board_utilities.int_to_arr(moves_u64)
 
